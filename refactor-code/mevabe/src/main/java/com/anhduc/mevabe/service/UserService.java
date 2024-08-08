@@ -12,7 +12,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +58,7 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAll() {
         return userRepository.findAll().stream()
                 .map(this::convertToResponse)
@@ -67,9 +69,19 @@ public class UserService {
         return modelMapper.map(user, UserResponse.class);
     }
 
-    public User getUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(
+    public UserResponse getUserById(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("User not found")
         );
+        return modelMapper.map(user, UserResponse.class);
     }
+
+    public UserResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext();
+        String email = context.getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+               new AppException(ErrorCode.USER_NOT_EXISTED));
+        return modelMapper.map(user, UserResponse.class);
+    }
+
 }

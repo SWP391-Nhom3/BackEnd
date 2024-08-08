@@ -10,11 +10,14 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -37,8 +40,15 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    User getUserByID(@PathVariable UUID userId) {
-        return userService.getUserById(userId);
+    ApiResponse<UserResponse> getUserByID(@PathVariable UUID userId) {
+        return ApiResponse.<UserResponse>builder()
+                .data(userService.getUserById(userId)).build();
+    }
+
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getMyInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .data(userService.getMyInfo()).build();
     }
 
     @DeleteMapping("/{userId}")
