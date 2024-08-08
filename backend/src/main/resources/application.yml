@@ -10,6 +10,21 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: ducnase161841@fpt.edu.vn
+    password: vgat drte uufu lxzt
+    port: 587
+    protocol: smtp
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   security:
     oauth2:
       client:
