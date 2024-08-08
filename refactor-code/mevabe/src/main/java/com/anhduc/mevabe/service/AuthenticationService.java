@@ -1,23 +1,29 @@
 package com.anhduc.mevabe.service;
 
 import com.anhduc.mevabe.dto.request.AuthenticationRequest;
+import com.anhduc.mevabe.dto.request.IntrospectRequest;
 import com.anhduc.mevabe.dto.response.AuthenticationResponse;
+import com.anhduc.mevabe.dto.response.IntrospectResponse;
 import com.anhduc.mevabe.exception.AppException;
 import com.anhduc.mevabe.exception.ErrorCode;
 import com.anhduc.mevabe.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -31,8 +37,8 @@ public class AuthenticationService {
     UserRepository userRepository;
 
     @NonFinal // dont inject in constructor
-    protected static final String SIGNER_KEY =
-            "mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5";
+    @Value("${jwt.signerKey}")
+    protected String SIGNER_KEY;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository.findByEmail(request.getEmail())
@@ -53,7 +59,7 @@ public class AuthenticationService {
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder() // claims standard
                 .subject(email)  // dai dien thong tin dang nhap
-                .issuer("/mevabe.com") // xác định cái token được issuer từ ai , thuong la domain service
+                .issuer("mevabe.com") // xác định cái token được issuer từ ai , thuong la domain service
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
@@ -71,5 +77,20 @@ public class AuthenticationService {
             log.error("Error while generating token", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
+        var token = request.getAccessToken();
+
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY);
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expityTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier); // return true or false
+
+        return IntrospectResponse.builder().valid(verified && expityTime.after(new Date())).build();
+
     }
 }
