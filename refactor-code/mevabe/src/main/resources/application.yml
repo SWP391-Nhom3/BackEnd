@@ -1,0 +1,17 @@
+
+
+spring:
+  application:
+    name: mevabe
+  datasource:
+    url: jdbc:mysql://localhost:3306/user-management?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password: 123456789
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8080
+  servlet:
+    context-path: /mevabe
