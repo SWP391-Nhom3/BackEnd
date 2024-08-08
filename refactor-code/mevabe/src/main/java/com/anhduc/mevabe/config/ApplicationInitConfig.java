@@ -34,7 +34,7 @@ public class ApplicationInitConfig {
                 user.setPassword(passwordEncoder.encode("admin"));
                 user.setFirstName("admin");
                 user.setLastName("admin");
-                user.setRoles(roles);
+               // user.setRoles(roles);
                 userRepository.save(user);
                 log.warn("Account admin has been created with email admin@gmail.com and password admin");
             }

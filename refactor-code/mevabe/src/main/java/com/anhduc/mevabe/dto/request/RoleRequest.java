@@ -1,4 +1,4 @@
-package com.anhduc.mevabe.dto.response;
+package com.anhduc.mevabe.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -7,15 +7,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-
-     UUID id;
-     String email;
-     String firstName;
-     String lastName;
-     Set<String> roles;
+public class RoleRequest {
+    UUID id;
+    String name;
+    String description;
+    Set<UUID> permissions;
 }

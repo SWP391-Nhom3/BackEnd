@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import java.util.Set;
 import java.util.UUID;
 
+
 @Entity
 @Getter
 @Setter
@@ -14,19 +15,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "users")
-public class User extends AuditAble{
+@Table(name = "roles")
+public class Role extends AuditAble{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    String email;
-    String password;
-    String firstName;
-    String lastName;
-//    private String phone;
-//    private int pointsBalance = 0;
-//    private String emailVerificationToken;
+    String name;
+    String description;
+
     @ManyToMany
-    Set<Role> roles;
+    Set<Permission> permissions;
 }
