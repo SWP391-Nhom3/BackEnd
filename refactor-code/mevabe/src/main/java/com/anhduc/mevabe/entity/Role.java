@@ -21,6 +21,7 @@ public class Role extends AuditAble{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+    @Column(unique = true, nullable = false)
     String name;
     String description;
 

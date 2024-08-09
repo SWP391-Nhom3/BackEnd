@@ -7,6 +7,7 @@ import com.anhduc.mevabe.entity.User;
 import com.anhduc.mevabe.enums.Role;
 import com.anhduc.mevabe.exception.AppException;
 import com.anhduc.mevabe.exception.ErrorCode;
+import com.anhduc.mevabe.repository.RoleRepository;
 import com.anhduc.mevabe.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class UserService {
     UserRepository userRepository;
     ModelMapper modelMapper;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     public UserResponse create(UserCreationRequest request) {
         User user = new User();
@@ -49,7 +51,8 @@ public class UserService {
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED)
         );
         modelMapper.map(request, user);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }
