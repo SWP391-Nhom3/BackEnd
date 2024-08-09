@@ -18,4 +18,8 @@ server:
 jwt:
   signerKey: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
 

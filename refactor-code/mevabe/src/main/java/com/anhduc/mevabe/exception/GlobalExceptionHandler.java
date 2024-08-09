@@ -2,6 +2,7 @@ package com.anhduc.mevabe.exception;
 
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,7 +15,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiResponse<String>> runtimeExceptionHandler(RuntimeException e) {
         return ResponseEntity.badRequest().body(
-                ApiResponse.<String>builder().code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
+                ApiResponse.<String>builder()
+                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
                         .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
                         .success(false).build()
         );
@@ -23,8 +25,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AppException.class)
     ResponseEntity<ApiResponse<String>> appExceptionHandler(AppException e) {
         ErrorCode errorCode = e.getErrorCode();
-        return ResponseEntity.badRequest().body(
-                ApiResponse.<String>builder().code(errorCode.getCode())
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.<String>builder()
+                        .code(errorCode.getCode())
                         .message(errorCode.getMessage())
                         .success(false).build()
         );
@@ -39,9 +42,21 @@ public class GlobalExceptionHandler {
         } catch (IllegalArgumentException ex) {
 //            errorCode
         }
-        return ResponseEntity.badRequest().body(ApiResponse.<String>builder()
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.<String>builder()
                 .code(errorCode.getCode())
-                        .success(false)
+                .success(false)
+                .message(errorCode.getMessage())
+                .build());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<ApiResponse<String>> accessDeniedExceptionHandler(AccessDeniedException e) {
+        ErrorCode errorCode = ErrorCode.UNAUTHRIZED;
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.<String>builder()
+                .code(errorCode.getCode())
+                .success(false)
                 .message(errorCode.getMessage())
                 .build());
     }
