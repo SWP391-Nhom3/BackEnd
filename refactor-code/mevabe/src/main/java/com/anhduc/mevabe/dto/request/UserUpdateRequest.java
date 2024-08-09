@@ -3,6 +3,9 @@ package com.anhduc.mevabe.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+import java.util.UUID;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,4 +15,5 @@ public class UserUpdateRequest {
     String password;
     String firstName;
     String lastName;
+    List<UUID> roles;
 }
