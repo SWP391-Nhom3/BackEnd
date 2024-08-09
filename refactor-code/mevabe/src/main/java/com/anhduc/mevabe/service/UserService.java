@@ -1,10 +1,11 @@
 package com.anhduc.mevabe.service;
 
+import com.anhduc.mevabe.dto.request.PasswordUpdateRequest;
 import com.anhduc.mevabe.dto.request.UserCreationRequest;
 import com.anhduc.mevabe.dto.request.UserUpdateRequest;
 import com.anhduc.mevabe.dto.response.UserResponse;
+import com.anhduc.mevabe.entity.Role;
 import com.anhduc.mevabe.entity.User;
-import com.anhduc.mevabe.enums.Role;
 import com.anhduc.mevabe.exception.AppException;
 import com.anhduc.mevabe.exception.ErrorCode;
 import com.anhduc.mevabe.repository.RoleRepository;
@@ -35,26 +36,39 @@ public class UserService {
 
     public UserResponse create(UserCreationRequest request) {
         User user = new User();
-        if (userRepository.existsByEmail(request.getEmail()))
-            throw new AppException(ErrorCode.USER_EXISTED);
         modelMapper.map(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        Set<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-       // user.setRoles(roles);
+        Set<Role> roles = new HashSet<>();
+        Role roleDefault = roleRepository.findByName("MEMBER").orElseThrow(
+                () -> new AppException(ErrorCode.ROLE_NOT_FOUND)
+        );
+        roles.add(roleDefault);
+        user.setRoles(roles);
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }
 
-    public UserResponse update(UUID userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(
+    public UserResponse updateMyInfo(UserUpdateRequest request) {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(currentUserEmail).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED)
         );
         modelMapper.map(request, user);
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
         userRepository.save(user);
+
         return modelMapper.map(user, UserResponse.class);
+    }
+
+    public void updateMyPassword(PasswordUpdateRequest request) {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(currentUserEmail).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
+        );
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.INCORRECT_PASSWORD);
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     public void delete(UUID userId) {

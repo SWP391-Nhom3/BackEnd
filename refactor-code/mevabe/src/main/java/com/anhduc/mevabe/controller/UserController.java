@@ -4,14 +4,12 @@ import com.anhduc.mevabe.dto.request.UserCreationRequest;
 import com.anhduc.mevabe.dto.request.UserUpdateRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import com.anhduc.mevabe.dto.response.UserResponse;
-import com.anhduc.mevabe.entity.User;
 import com.anhduc.mevabe.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,9 +57,9 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/{userId}")
-    ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request, @PathVariable UUID userId) {
+    @PutMapping
+    ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .data(userService.update(userId, request)).build();
+                .data(userService.updateMyInfo(request)).build();
     }
 }

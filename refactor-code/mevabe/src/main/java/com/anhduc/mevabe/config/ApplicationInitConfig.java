@@ -1,9 +1,7 @@
 package com.anhduc.mevabe.config;
 
 import com.anhduc.mevabe.entity.User;
-import com.anhduc.mevabe.enums.Role;
 import com.anhduc.mevabe.repository.UserRepository;
-import com.anhduc.mevabe.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -39,5 +37,5 @@ public class ApplicationInitConfig {
                 log.warn("Account admin has been created with email admin@gmail.com and password admin");
             }
         };
-    };
+    }
 }
