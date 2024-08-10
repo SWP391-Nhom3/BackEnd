@@ -17,6 +17,8 @@ server:
     context-path: /mevabe
 jwt:
   signerKey: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
+  tokenExpiryTime: 20 #in second
+  refreshTokenExpiration: 120 #insecond
 
 springdoc:
   swagger-ui:

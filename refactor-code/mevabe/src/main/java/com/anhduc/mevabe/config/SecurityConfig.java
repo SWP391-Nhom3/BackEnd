@@ -25,6 +25,7 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/auth/introspect",
             "/api/auth/logout",
+            "/api/auth/refresh"
     };
 
     private final CustomJwtDecoder customJwtDecoder;
