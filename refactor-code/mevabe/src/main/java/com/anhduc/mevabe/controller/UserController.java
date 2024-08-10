@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.controller;
 
+import com.anhduc.mevabe.dto.request.CreatePasswordRequest;
 import com.anhduc.mevabe.dto.request.UserCreationRequest;
 import com.anhduc.mevabe.dto.request.UserUpdateRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
@@ -28,6 +29,14 @@ public class UserController {
     ApiResponse<UserResponse> addUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .data(userService.create(request))
+                .build();
+    }
+
+    @PostMapping("/create-password")
+    ApiResponse<Void> createPassword(@RequestBody @Valid CreatePasswordRequest request) {
+        userService.createPassword(request);
+        return ApiResponse.<Void>builder()
+                .message("Successfully created password, you could use it to login")
                 .build();
     }
 

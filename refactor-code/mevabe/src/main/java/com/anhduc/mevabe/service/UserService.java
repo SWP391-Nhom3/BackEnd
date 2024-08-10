@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.service;
 
+import com.anhduc.mevabe.dto.request.CreatePasswordRequest;
 import com.anhduc.mevabe.dto.request.PasswordUpdateRequest;
 import com.anhduc.mevabe.dto.request.UserCreationRequest;
 import com.anhduc.mevabe.dto.request.UserUpdateRequest;
@@ -18,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -98,7 +100,23 @@ public class UserService {
         String email = context.getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                new AppException(ErrorCode.USER_NOT_EXISTED));
-        return modelMapper.map(user, UserResponse.class);
+
+        var userResponse = modelMapper.map(user, UserResponse.class);
+        userResponse.setNoPassword(!StringUtils.hasText(user.getPassword()));
+        return userResponse;
     }
 
+    public void createPassword(CreatePasswordRequest request) {
+
+        var context = SecurityContextHolder.getContext();
+        String email = context.getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (StringUtils.hasText(user.getPassword()))
+            throw new AppException(ErrorCode.PASSWORD_EXISTED);
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
+    }
 }
