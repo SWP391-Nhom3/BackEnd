@@ -158,13 +158,13 @@ public class ApplicationInitConfig {
                 roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole));
 
                 // Create users with corresponding roles
-                User guestUser = User.builder()
-                        .email("guest@example.com")
-                        .password(passwordEncoder.encode("guestpassword"))
-                        .firstName("Guest")
-                        .lastName("User")
-                        .roles(Set.of(guestRole))
-                        .build();
+//                User guestUser = User.builder()
+//                        .email("guest@example.com")
+//                        .password(passwordEncoder.encode("guestpassword"))
+//                        .firstName("Guest")
+//                        .lastName("User")
+//                        .roles(Set.of(guestRole))
+//                        .build();
 
                 User memberUser = User.builder()
                         .email("member@example.com")
@@ -191,8 +191,11 @@ public class ApplicationInitConfig {
                         .build();
 
                 // Save users to the database
-                userRepository.saveAll(List.of(guestUser, memberUser, staffUser, adminUser));
+                userRepository.saveAll(List.of(memberUser, staffUser, adminUser));
 
+                log.warn("Member account: member@example.com. password: memberpassword");
+                log.warn("Staff account: staff@example.com. password: staffpassword");
+                log.warn("Admin account: admin@example.com. password: adminpassword");
                 log.info("Default users have been created successfully.");
             } else {
                 log.info("Roles, permissions, and default users already exist. Skipping initialization.");

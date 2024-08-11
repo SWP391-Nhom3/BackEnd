@@ -12,4 +12,5 @@ public class AuthenticationResponse {
     String accessToken;
     @Builder.Default
     String tokenType = "Bearer";
+    UserResponse user;
 }

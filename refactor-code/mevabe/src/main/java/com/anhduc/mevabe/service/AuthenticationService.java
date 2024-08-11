@@ -3,6 +3,7 @@ package com.anhduc.mevabe.service;
 import com.anhduc.mevabe.dto.request.*;
 import com.anhduc.mevabe.dto.response.AuthenticationResponse;
 import com.anhduc.mevabe.dto.response.IntrospectResponse;
+import com.anhduc.mevabe.dto.response.UserResponse;
 import com.anhduc.mevabe.entity.InvalidatedToken;
 import com.anhduc.mevabe.entity.Role;
 import com.anhduc.mevabe.entity.User;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,7 @@ public class AuthenticationService {
     OutboundIdentityClient outboundIdentityClient;
     OutboundUserClient outboundUserClient;
     RoleRepository roleRepository;
+    private final ModelMapper modelMapper;
 
     @NonFinal // dont inject in constructor
     @Value("${jwt.signerKey}")
@@ -77,9 +80,13 @@ public class AuthenticationService {
         if (!authenticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         var token = generateToken(user);
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+
         return AuthenticationResponse.builder()
                 .accessToken(token)
+                .user(userResponse)
                 .build();
+
     }
 
     private String generateToken(User user) {
