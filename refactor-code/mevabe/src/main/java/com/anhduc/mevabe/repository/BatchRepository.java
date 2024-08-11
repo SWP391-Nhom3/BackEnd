@@ -7,5 +7,5 @@ import java.util.Date;
 import java.util.UUID;
 
 public interface BatchRepository extends JpaRepository<Batch, UUID> {
-    int countBymanufactureDate(Date manufactureDate);
+    int countByManufactureDate(Date manufactureDate);
 }

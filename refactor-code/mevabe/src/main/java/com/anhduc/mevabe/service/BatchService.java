@@ -28,7 +28,10 @@ public class BatchService {
     ModelMapper modelMapper;
 
     public void create(CreateBatchRequest request)  {
-        batchRepository.save(modelMapper.map(request, Batch.class));
+        Batch batch = modelMapper.map(request, Batch.class);
+        int counter = batchRepository.countByManufactureDate(batch.getManufactureDate()) + 1;
+        batch.generateBatchNumber(counter);
+        batchRepository.save(batch);
     }
 
     public List<BatchResponse> findAll() {
