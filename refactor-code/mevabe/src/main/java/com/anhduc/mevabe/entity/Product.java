@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -26,7 +27,11 @@ public class Product extends AuditAble{
     @Column(nullable = false)
     BigDecimal price;
     int stockQuantity = 0;
-    String imageUrl;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url")
+    private List<String> images;
+    String coverImageUrl;
     @ManyToOne
     Brand brand;
     @ManyToOne

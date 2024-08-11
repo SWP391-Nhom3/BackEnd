@@ -18,6 +18,7 @@ public enum ErrorCode {
     INCORRECT_PASSWORD(1008, "Incorrect password", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND(1009, "Role not found", HttpStatus.NOT_FOUND),
     PASSWORD_EXISTED(1010, "Password already existed", HttpStatus.CONFLICT),
+    PRODUCT_NOT_FOUND(1011, "Product not found", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;

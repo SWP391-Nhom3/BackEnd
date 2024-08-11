@@ -21,4 +21,8 @@ public class Brand extends AuditAble{
     UUID id;
     @Column(unique = true, nullable = false)
     String name;
+
+    public Brand(String name) {
+        this.name = name;
+    }
 }

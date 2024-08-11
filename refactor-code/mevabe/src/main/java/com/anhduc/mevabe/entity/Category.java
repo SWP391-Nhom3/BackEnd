@@ -21,4 +21,8 @@ public class Category extends AuditAble{
     UUID id;
     @Column(unique = true, nullable = false)
     String name;
+
+    public Category(String name) {
+        this.name = name;
+    }
 }
