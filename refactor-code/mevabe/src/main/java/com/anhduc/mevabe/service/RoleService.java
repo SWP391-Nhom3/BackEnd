@@ -27,12 +27,12 @@ public class RoleService {
     ModelMapper modelMapper;
     PermissionRepository permissionRepository;
 
-    public RoleResponse create(RoleRequest request) {
-        Role role = modelMapper.map(request, Role.class);
-        var permissions = permissionRepository.findAllById(request.getPermissions());
-        role.setPermissions(new HashSet<>(permissions));
-        return modelMapper.map(roleRepository.save(role), RoleResponse.class);
-    }
+//    public RoleResponse create(RoleRequest request) {
+//        Role role = modelMapper.map(request, Role.class);
+//        var permissions = permissionRepository.findAllById(request.getPermissions());
+//        role.setPermissions(new HashSet<>(permissions));
+//        return modelMapper.map(roleRepository.save(role), RoleResponse.class);
+//    }
 
     public List<RoleResponse> findAll() {
         return roleRepository.findAll().stream()
@@ -40,9 +40,9 @@ public class RoleService {
                 .toList();
     }
 
-    public void deleteById(UUID id) {
-        roleRepository.deleteById(id);
-    }
+//    public void deleteById(UUID id) {
+//        roleRepository.deleteById(id);
+//    }
 
     private RoleResponse convertRoleToRoleResponse(Role role) {
         return modelMapper.map(role, RoleResponse.class);
