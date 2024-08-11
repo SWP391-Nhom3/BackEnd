@@ -4,7 +4,8 @@ import com.anhduc.mevabe.dto.request.UserCreationRequest;
 import com.anhduc.mevabe.dto.request.UserUpdateRequest;
 import com.anhduc.mevabe.dto.response.UserResponse;
 import com.anhduc.mevabe.entity.User;
-import com.anhduc.mevabe.enums.Role;
+import com.anhduc.mevabe.entity.Role;
+//import com.anhduc.mevabe.enums.Role;
 import com.anhduc.mevabe.exception.AppException;
 import com.anhduc.mevabe.exception.ErrorCode;
 import com.anhduc.mevabe.repository.RoleRepository;
@@ -33,15 +34,29 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
-    public UserResponse create(UserCreationRequest request) {
-        User user = new User();
-        if (userRepository.existsByEmail(request.getEmail()))
+    public UserResponse registerUser(UserCreationRequest request) {
+        return createUser(request, "MEMBER");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createStaff(UserCreationRequest request) {
+        return createUser(request, "STAFF");
+    }
+
+    private UserResponse createUser(UserCreationRequest request, String roleName) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        User user = new User();
         modelMapper.map(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        Set<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-       // user.setRoles(roles);
+
+        Role role = roleRepository.findByName(roleName).get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
+
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }
@@ -51,8 +66,9 @@ public class UserService {
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED)
         );
         modelMapper.map(request, user);
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+//        var roles = roleRepository.findAllById(request.getRoles());
+//        user.setRoles(new HashSet<>(roles));
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }

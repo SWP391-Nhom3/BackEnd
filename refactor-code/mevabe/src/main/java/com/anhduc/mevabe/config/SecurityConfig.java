@@ -1,6 +1,6 @@
 package com.anhduc.mevabe.config;
 
-import com.anhduc.mevabe.enums.Role;
+//import com.anhduc.mevabe.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,7 +45,7 @@ public class SecurityConfig {
                                         "/swagger-resources/**",
                                         "/webjars/**").permitAll()
 //                                .requestMatchers(HttpMethod.GET, "/api/users").hasRole(Role.ADMIN.name())
-                                .anyRequest().authenticated());
+                                .anyRequest().permitAll());
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
