@@ -23,12 +23,15 @@ public class Product extends AuditAble{
     @Column(unique = true, nullable = false)
     String name;
     String description;
+    @Column(nullable = false)
     BigDecimal price;
-    Long stockQuantity;
+    int stockQuantity = 0;
     String imageUrl;
     @ManyToOne
     Brand brand;
     @ManyToOne
     Category category;
+    @ManyToOne
+    User user;
 
 }

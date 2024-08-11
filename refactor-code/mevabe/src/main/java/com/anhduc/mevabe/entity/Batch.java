@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
@@ -32,4 +33,10 @@ public class Batch {
     private LocalDateTime createdAt;
     @ManyToOne
     Product product;
+
+    public void generateBatchNumber(int counter) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String dateStr = sdf.format(this.manufactureDate);
+        this.batchNumber = String.format("%s-%03d", dateStr, counter);
+    }
 }
