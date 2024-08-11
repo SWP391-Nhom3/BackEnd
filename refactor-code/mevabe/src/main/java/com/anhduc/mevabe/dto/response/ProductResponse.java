@@ -3,6 +3,7 @@ package com.anhduc.mevabe.dto.response;
 import com.anhduc.mevabe.entity.Brand;
 import com.anhduc.mevabe.entity.Category;
 import com.anhduc.mevabe.entity.User;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import lombok.*;

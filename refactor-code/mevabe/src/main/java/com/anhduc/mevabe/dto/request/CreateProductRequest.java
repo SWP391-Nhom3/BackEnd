@@ -26,6 +26,8 @@ public class CreateProductRequest {
     Brand brand;
     Category category;
     @JsonIgnore
+    User user;
+    @JsonIgnore
     List<String> imageUrl;
     @JsonIgnore
     String coverImageUrl;

@@ -54,7 +54,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    ApiResponse<ProductResponse> update(@RequestBody @Valid CreateProductRequest request, @PathVariable UUID id) {
+    ApiResponse<ProductResponse> update(@ModelAttribute @Valid CreateProductRequest request, @PathVariable UUID id) throws IOException {
         return ApiResponse.<ProductResponse>builder()
                 .data(productService.update(id, request)).build();
     }

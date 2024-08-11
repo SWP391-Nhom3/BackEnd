@@ -27,7 +27,7 @@ public class Batch {
     String batchNumber;
     Date manufactureDate;
     Date expiryDate;
-    Long quantity;
+    int quantity;
     @CreatedDate
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
