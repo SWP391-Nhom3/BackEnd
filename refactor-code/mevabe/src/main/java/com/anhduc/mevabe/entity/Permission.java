@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "permissions")
-public class Permission extends AuditAble{
+public class Permission{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

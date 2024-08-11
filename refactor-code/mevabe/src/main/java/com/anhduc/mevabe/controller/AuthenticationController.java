@@ -2,6 +2,8 @@ package com.anhduc.mevabe.controller;
 
 import com.anhduc.mevabe.dto.request.AuthenticationRequest;
 import com.anhduc.mevabe.dto.request.IntrospectRequest;
+import com.anhduc.mevabe.dto.request.LogoutRequest;
+import com.anhduc.mevabe.dto.request.RefreshRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import com.anhduc.mevabe.dto.response.AuthenticationResponse;
 import com.anhduc.mevabe.dto.response.IntrospectResponse;
@@ -33,11 +35,28 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(result)
+                .build();
+    }
+
     @PostMapping("/introspect")
-    public ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
+    public ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
+            throws ParseException, JOSEException {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
                 .data(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public  ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }
