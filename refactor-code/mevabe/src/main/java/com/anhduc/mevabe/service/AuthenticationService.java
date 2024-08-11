@@ -1,17 +1,18 @@
 package com.anhduc.mevabe.service;
 
-import com.anhduc.mevabe.dto.request.AuthenticationRequest;
-import com.anhduc.mevabe.dto.request.IntrospectRequest;
-import com.anhduc.mevabe.dto.request.LogoutRequest;
-import com.anhduc.mevabe.dto.request.RefreshRequest;
+import com.anhduc.mevabe.dto.request.*;
 import com.anhduc.mevabe.dto.response.AuthenticationResponse;
 import com.anhduc.mevabe.dto.response.IntrospectResponse;
 import com.anhduc.mevabe.entity.InvalidatedToken;
+import com.anhduc.mevabe.entity.Role;
 import com.anhduc.mevabe.entity.User;
 import com.anhduc.mevabe.exception.AppException;
 import com.anhduc.mevabe.exception.ErrorCode;
 import com.anhduc.mevabe.repository.InvalidatedTokenRepository;
+import com.anhduc.mevabe.repository.RoleRepository;
+import com.anhduc.mevabe.repository.httpclient.OutboundIdentityClient;
 import com.anhduc.mevabe.repository.UserRepository;
+import com.anhduc.mevabe.repository.httpclient.OutboundUserClient;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -30,9 +31,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -43,6 +42,9 @@ public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
     PasswordEncoder passwordEncoder;
+    OutboundIdentityClient outboundIdentityClient;
+    OutboundUserClient outboundUserClient;
+    RoleRepository roleRepository;
 
     @NonFinal // dont inject in constructor
     @Value("${jwt.signerKey}")
@@ -56,6 +58,18 @@ public class AuthenticationService {
     @Value("${jwt.refreshTokenExpiration}")
     protected long refreshTokenExpiration;
 
+    @NonFinal
+    @Value("${oauth2.google.client-id}")
+    private String CLIENT_ID;
+
+    @NonFinal
+    @Value("${oauth2.google.client-secret}")
+    protected String CLIENT_SECRET;
+
+    @NonFinal
+    @Value("${oauth2.google.redirect-uri}")
+    protected String REDIRECT_URI;
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         var user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -65,7 +79,6 @@ public class AuthenticationService {
         var token = generateToken(user);
         return AuthenticationResponse.builder()
                 .accessToken(token)
-                .authenticated(true)
                 .build();
     }
 
@@ -180,7 +193,36 @@ public class AuthenticationService {
         var token = generateToken(user);
         return AuthenticationResponse.builder()
                 .accessToken(token)
-                .authenticated(true)
                 .build();
+    }
+
+    public AuthenticationResponse outboundLoginGoogle(String code) {
+        var response = outboundIdentityClient.exchangeToken(ExchangeTokenRequest.builder()
+                        .code(code)
+                        .clientId(CLIENT_ID)
+                        .clientSecret(CLIENT_SECRET)
+                        .redirectUri(REDIRECT_URI)
+                        .grantType("authorization_code")
+                .build());
+        log.info("token: {}", response);
+        var userInfo = outboundUserClient.getUserInfo("json",response.getAccessToken());
+
+        log.info("userInfo: {}", userInfo);
+        Set<Role> roles = new HashSet<>();
+        Role roleDefault = roleRepository.findByName("MEMBER").orElseThrow(
+                () -> new AppException(ErrorCode.ROLE_NOT_FOUND)
+        );
+        roles.add(roleDefault);
+        var user = userRepository.findByEmail(userInfo.getEmail()).orElseGet(
+                () -> userRepository.save(User.builder()
+                                .email(userInfo.getEmail())
+                                .firstName(userInfo.getGiveName())
+                                .lastName(userInfo.getFamilyName())
+                                .roles(roles)
+                        .build())
+        );
+
+        var token = generateToken(user);
+        return AuthenticationResponse.builder().accessToken(token).build();
     }
 }

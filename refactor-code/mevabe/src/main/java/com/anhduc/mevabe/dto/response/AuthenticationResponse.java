@@ -10,5 +10,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthenticationResponse {
     String accessToken;
-    boolean authenticated; //bo di
+    @Builder.Default
+    String tokenType = "Bearer";
 }
