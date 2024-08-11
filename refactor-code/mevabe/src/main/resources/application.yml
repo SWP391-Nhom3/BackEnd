@@ -4,7 +4,7 @@ spring:
   application:
     name: mevabe
   datasource:
-    url: jdbc:mysql://localhost:3306/user-management?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/MilkJoy?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
     username: root
     password: 123456789
   jpa:
@@ -13,8 +13,6 @@ spring:
     show-sql: true
 server:
   port: 8080
-  servlet:
-    context-path: /mevabe
 jwt:
   signerKey: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
   tokenExpiryTime: 20 #in second

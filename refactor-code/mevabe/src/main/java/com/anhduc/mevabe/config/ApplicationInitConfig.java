@@ -3,6 +3,7 @@ package com.anhduc.mevabe.config;
 import com.anhduc.mevabe.entity.Permission;
 import com.anhduc.mevabe.entity.Role;
 import com.anhduc.mevabe.entity.User;
+//import com.anhduc.mevabe.enums.Role;
 import com.anhduc.mevabe.repository.PermissionRepository;
 import com.anhduc.mevabe.repository.RoleRepository;
 import com.anhduc.mevabe.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +31,28 @@ public class ApplicationInitConfig {
     RoleRepository roleRepository;
     PermissionRepository permissionRepository;
 
+
     @Bean
     ApplicationRunner applicationRunner() {
         return args -> {
+            initializeRoles();
+            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+                Set<Role> roles = new HashSet<>();
+                roles.add(roleRepository.findByName("ADMIN")
+                        .orElseThrow(() -> new RuntimeException("Role ADMIN not found")));
+                User user = new User();
+                user.setEmail("admin@gmail.com");
+                user.setPassword(passwordEncoder.encode("admin"));
+                user.setFirstName("admin");
+                user.setLastName("admin");
+                user.setRoles(roles);
+                userRepository.save(user);
+                log.warn("Account admin has been created with email admin@gmail.com and password admin");
+            }
+        };
+    };
+
+    private void initializeRoles() {
             // Check if roles already exist to avoid duplication
             if (roleRepository.count() == 0 && permissionRepository.count() == 0) {
                 log.info("Initializing roles, permissions, and default users.");
@@ -178,4 +199,3 @@ public class ApplicationInitConfig {
             }
         };
     }
-}

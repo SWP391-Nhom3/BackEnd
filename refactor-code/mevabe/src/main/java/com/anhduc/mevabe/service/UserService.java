@@ -34,15 +34,27 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
-    public UserResponse create(UserCreationRequest request) {
+    public UserResponse registerUser(UserCreationRequest request) {
+        return createUser(request, "MEMBER");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createStaff(UserCreationRequest request) {
+        return createUser(request, "STAFF");
+    }
+
+    private UserResponse createUser(UserCreationRequest request, String roleName) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
         User user = new User();
         modelMapper.map(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        Role role = roleRepository.findByName(roleName).get();
         Set<Role> roles = new HashSet<>();
-        Role roleDefault = roleRepository.findByName("MEMBER").orElseThrow(
-                () -> new AppException(ErrorCode.ROLE_NOT_FOUND)
-        );
-        roles.add(roleDefault);
+        roles.add(role);
         user.setRoles(roles);
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
