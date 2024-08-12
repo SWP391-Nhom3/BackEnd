@@ -17,8 +17,14 @@ jwt:
   signerKey: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
   tokenExpiryTime: 20 #in second
   refreshTokenExpiration: 120 #insecond
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+oauth2:
+  google:
+    client-id: "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com"
+    client-secret: "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"
+    redirect-uri: "http://localhost:3000/authenticate"
 
 
