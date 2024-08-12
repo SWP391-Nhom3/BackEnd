@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -27,10 +28,10 @@ public class ApplicationInitConfig {
     BrandRepository brandRepository;
     CategoryRepository categoryRepository;
 
+
     @Bean
     ApplicationRunner applicationRunner() {
         return args -> {
-
             // Initialize brands if not already present
             if (brandRepository.count() == 0) {
                 log.info("Initializing brands...");
@@ -66,7 +67,24 @@ public class ApplicationInitConfig {
             }
 
             log.info("Brand and category initialization completed.");
+            initializeRoles();
+            if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+                Set<Role> roles = new HashSet<>();
+                roles.add(roleRepository.findByName("ADMIN")
+                        .orElseThrow(() -> new RuntimeException("Role ADMIN not found")));
+                User user = new User();
+                user.setEmail("admin@gmail.com");
+                user.setPassword(passwordEncoder.encode("admin"));
+                user.setFirstName("admin");
+                user.setLastName("admin");
+                user.setRoles(roles);
+                userRepository.save(user);
+                log.warn("Account admin has been created with email admin@gmail.com and password admin");
+            }
+        };
+    };
 
+    private void initializeRoles() {
             // Check if roles already exist to avoid duplication
             if (roleRepository.count() == 0 && permissionRepository.count() == 0) {
                 log.info("Initializing roles, permissions, and default users.");
@@ -172,13 +190,13 @@ public class ApplicationInitConfig {
                 roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole));
 
                 // Create users with corresponding roles
-                User guestUser = User.builder()
-                        .email("guest@example.com")
-                        .password(passwordEncoder.encode("guestpassword"))
-                        .firstName("Guest")
-                        .lastName("User")
-                        .roles(Set.of(guestRole))
-                        .build();
+//                User guestUser = User.builder()
+//                        .email("guest@example.com")
+//                        .password(passwordEncoder.encode("guestpassword"))
+//                        .firstName("Guest")
+//                        .lastName("User")
+//                        .roles(Set.of(guestRole))
+//                        .build();
 
                 User memberUser = User.builder()
                         .email("member@example.com")
@@ -205,12 +223,14 @@ public class ApplicationInitConfig {
                         .build();
 
                 // Save users to the database
-                userRepository.saveAll(List.of(guestUser, memberUser, staffUser, adminUser));
+                userRepository.saveAll(List.of(memberUser, staffUser, adminUser));
 
+                log.warn("Member account: member@example.com. password: memberpassword");
+                log.warn("Staff account: staff@example.com. password: staffpassword");
+                log.warn("Admin account: admin@example.com. password: adminpassword");
                 log.info("Default users have been created successfully.");
             } else {
                 log.info("Roles, permissions, and default users already exist. Skipping initialization.");
             }
         };
     }
-}
