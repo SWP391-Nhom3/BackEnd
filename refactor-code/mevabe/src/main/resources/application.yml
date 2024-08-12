@@ -7,6 +7,12 @@ spring:
     url: jdbc:mysql://localhost:3306/MilkJoy?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
     username: root
     password: 123456789
+    # dùng sqlserver mở đoạn này
+#  datasource:
+#    url: jdbc:sqlserver://localhost:1433;databaseName=user-management;encrypt=true;trustServerCertificate=true;
+#    username: your_sqlserver_username
+#    password: your_sqlserver_password
+#    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,8 +21,8 @@ server:
   port: 8080
 jwt:
   signerKey: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
-  tokenExpiryTime: 20 #in second
-  refreshTokenExpiration: 120 #insecond
+  tokenExpiryTime: 3600 #in second
+  refreshTokenExpiration: 36000 #insecond
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

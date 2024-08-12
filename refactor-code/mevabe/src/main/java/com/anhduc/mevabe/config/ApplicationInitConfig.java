@@ -1,12 +1,7 @@
 package com.anhduc.mevabe.config;
 
-import com.anhduc.mevabe.entity.Permission;
-import com.anhduc.mevabe.entity.Role;
-import com.anhduc.mevabe.entity.User;
-//import com.anhduc.mevabe.enums.Role;
-import com.anhduc.mevabe.repository.PermissionRepository;
-import com.anhduc.mevabe.repository.RoleRepository;
-import com.anhduc.mevabe.repository.UserRepository;
+import com.anhduc.mevabe.entity.*;
+import com.anhduc.mevabe.repository.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,11 +25,48 @@ public class ApplicationInitConfig {
     UserRepository userRepository;
     RoleRepository roleRepository;
     PermissionRepository permissionRepository;
+    BrandRepository brandRepository;
+    CategoryRepository categoryRepository;
 
 
     @Bean
     ApplicationRunner applicationRunner() {
         return args -> {
+            // Initialize brands if not already present
+            if (brandRepository.count() == 0) {
+                log.info("Initializing brands...");
+
+                List<Brand> brands = List.of(
+                        new Brand("Abbott"),
+                        new Brand("Mead Johnson"),
+                        new Brand("Vinamilk"),
+                        new Brand("Nutifood"),
+                        new Brand("Nestlé"),
+                        new Brand("FrieslandCampina")
+                );
+
+                brandRepository.saveAll(brands);
+            }
+
+            // Initialize categories if not already present
+            if (categoryRepository.count() == 0) {
+                log.info("Initializing categories...");
+
+                List<Category> categories = List.of(
+                        new Category("Sữa công thức"),
+                        new Category("Sữa tươi"),
+                        new Category("Sữa bột"),
+                        new Category("Sữa cho bà bầu"),
+                        new Category("Sữa dành cho trẻ em"),
+                        new Category("Thực phẩm bổ sung"),
+                        new Category("Dinh dưỡng cho mẹ bầu"),
+                        new Category("Dinh dưỡng cho bé")
+                );
+
+                categoryRepository.saveAll(categories);
+            }
+
+            log.info("Brand and category initialization completed.");
             initializeRoles();
             if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
                 Set<Role> roles = new HashSet<>();
