@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -14,16 +13,17 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "users")
-public class User extends AuditAble{
+@Table(name = "orderstatus")
+public class OrderStatus{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    String email;
-    String password;
-    String firstName;
-    String lastName;
-    @ManyToMany
-    Set<Role> roles;
+    @Column(unique = true, nullable = false)
+    String name;
+
+    @OneToMany(mappedBy = "orderStatus")
+    private List<Order> orders;
+
+    public OrderStatus(String name){this.name = name;}
 }

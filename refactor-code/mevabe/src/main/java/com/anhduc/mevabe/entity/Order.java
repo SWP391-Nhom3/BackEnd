@@ -38,9 +38,4 @@ public class Order extends AuditAble{
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     Transaction transaction;
-
-    public void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
-        orderItem.setOrder(this);
-    }
 }

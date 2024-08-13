@@ -4,7 +4,7 @@ spring:
   application:
     name: mevabe
   datasource:
-    url: jdbc:mysql://localhost:3306/user-management?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/MilkJoy?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
     username: root
     password: 123456789
     # dùng sqlserver mở đoạn này
@@ -19,15 +19,25 @@ spring:
     show-sql: true
 server:
   port: 8080
-  servlet:
-    context-path: /mevabe
 jwt:
   signerKey: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
   tokenExpiryTime: 3600 #in second
   refreshTokenExpiration: 36000 #insecond
-
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
-
+oauth2:
+  google:
+    client-id: "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com"
+    client-secret: "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"
+    redirect-uri: "http://localhost:3000/authenticate"
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA4MTWL3ET3M4ZYFYP
+      secretKey: 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
+    region:
+      static: ap-southeast-1
+    s3:
+      bucket-name: mutantorchid
 

@@ -29,18 +29,18 @@ public class RoleController {
                 .build();
     }
 
-    @PostMapping
-    ApiResponse<RoleResponse> add(@RequestBody RoleRequest request) {
-        return ApiResponse.<RoleResponse>builder()
-                .data(roleService.create(request))
-                .build();
-    }
-
-    @DeleteMapping("/{roleId}")
-    ApiResponse<Void> deleteById(@PathVariable UUID roleId) {
-        roleService.deleteById(roleId);
-        return ApiResponse.<Void>builder()
-                .message("Role deleted")
-                .build();
-    }
+//    @PostMapping
+//    ApiResponse<RoleResponse> add(@RequestBody RoleRequest request) {
+//        return ApiResponse.<RoleResponse>builder()
+//                .data(roleService.create(request))
+//                .build();
+//    }
+//
+//    @DeleteMapping("/{roleId}")
+//    ApiResponse<Void> deleteById(@PathVariable UUID roleId) {
+//        roleService.deleteById(roleId);
+//        return ApiResponse.<Void>builder()
+//                .message("Role deleted")
+//                .build();
+//    }
 }
