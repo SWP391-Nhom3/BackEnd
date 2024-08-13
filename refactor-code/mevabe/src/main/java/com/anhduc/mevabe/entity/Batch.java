@@ -26,6 +26,7 @@ public class Batch {
     UUID id;
     String batchNumber;
     Date manufactureDate;
+    Integer sold=0;
     Date expiryDate;
     int quantity;
     @CreatedDate

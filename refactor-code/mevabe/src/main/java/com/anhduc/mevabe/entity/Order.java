@@ -1,12 +1,12 @@
 package com.anhduc.mevabe.entity;
 
-import com.anhduc.mevabe.enums.OrderStatus;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,25 +17,41 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
 public class Order extends AuditAble{
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID id;
+    UUID Id;
+//    Long memId;
+//    Long staffId;
+    String voucherCode;
+    String fullName;
+    String address;
+    String phone;
+    String email;
+    String paymentMethod;
+
+    @Temporal(TemporalType.DATE)
+    Date requiredDate;
+
+    @Temporal(TemporalType.DATE)
+    Date acceptedDate;
+
+    @Temporal(TemporalType.DATE)
+    Date shippedDate;
+
+    BigDecimal shipFee;
     BigDecimal totalPrice;
-    @Enumerated(EnumType.STRING)
-    OrderStatus status;
+
+//    @ManyToOne
+//    @JoinColumn(name = "voucherCode", insertable = false, updatable = false)
+//    private Voucher voucher;
+
     @ManyToOne
-    User user;
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    List<OrderItem> orderItems;
+    @JoinColumn(name = "statusId", insertable = false, updatable = false)
+    private OrderStatus orderStatus;
 
-    @OneToOne
-    @JoinColumn(name = "voucher_id", referencedColumnName = "id")
-    Voucher voucher;
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetail> orderDetails;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
-    Transaction transaction;
 }
