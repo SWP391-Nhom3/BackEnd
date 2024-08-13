@@ -31,5 +31,13 @@ oauth2:
     client-id: "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com"
     client-secret: "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"
     redirect-uri: "http://localhost:3000/authenticate"
-
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA4MTWL3ET3M4ZYFYP
+      secretKey: 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
+    region:
+      static: ap-southeast-1
+    s3:
+      bucket-name: mutantorchid
 
