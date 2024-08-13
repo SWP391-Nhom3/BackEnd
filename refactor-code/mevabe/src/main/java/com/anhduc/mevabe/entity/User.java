@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,15 +24,6 @@ public class User extends AuditAble{
     String password;
     String firstName;
     String lastName;
-    String phone;
-    @Temporal(TemporalType.DATE)
-    Date dob;
-    String address;
-    Integer point;
-
-//    @Enumerated(EnumType.STRING)
-//    UserVerifyStatus verify;
-
     @ManyToMany
     Set<Role> roles;
 }
