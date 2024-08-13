@@ -43,9 +43,9 @@ public class Order extends AuditAble{
     BigDecimal shipFee;
     BigDecimal totalPrice;
 
-//    @ManyToOne
-//    @JoinColumn(name = "voucherCode", insertable = false, updatable = false)
-//    private Voucher voucher;
+    @OneToOne
+    @JoinColumn(name = "voucher_id")
+    private Voucher voucher;
 
     @ManyToOne
     @JoinColumn(name = "statusId", insertable = false, updatable = false)
