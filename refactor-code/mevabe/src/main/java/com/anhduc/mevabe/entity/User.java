@@ -25,6 +25,7 @@ public class User extends AuditAble{
     String password;
     String firstName;
     String lastName;
+    String phone;
     @Temporal(TemporalType.DATE)
     Date dob;
     String address;

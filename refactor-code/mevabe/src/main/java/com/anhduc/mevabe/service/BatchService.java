@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,6 +60,13 @@ public class BatchService {
         modelMapper.map(request, batch);
         return convert(batchRepository.save(batch));
 
+    }
+
+    public int getTotalAvailableQuantity(UUID productId) {
+        List<Batch> productBatches = batchRepository.findByProductIdAndExpiryDateAfter(productId, new Date());
+        return productBatches.stream()
+                .mapToInt(batch -> batch.getQuantity() - batch.getSold())
+                .sum();
     }
 
     public void delete(UUID id) {

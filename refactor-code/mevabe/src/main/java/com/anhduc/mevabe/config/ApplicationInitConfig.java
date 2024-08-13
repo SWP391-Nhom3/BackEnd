@@ -27,11 +27,25 @@ public class ApplicationInitConfig {
     PermissionRepository permissionRepository;
     BrandRepository brandRepository;
     CategoryRepository categoryRepository;
+    OrderStatusRepository orderStatusRepository;
+
 
 
     @Bean
     ApplicationRunner applicationRunner() {
         return args -> {
+            if (orderStatusRepository.count() == 0) {
+                log.info("Initializing order statuses...");
+
+                List<OrderStatus> orderStatuses = List.of(
+                        new OrderStatus("Chờ xác nhận"),
+                        new OrderStatus("Đã xác nhận"),
+                        new OrderStatus("Hoàn thành")
+                );
+
+                orderStatusRepository.saveAll(orderStatuses);
+            }
+
             // Initialize brands if not already present
             if (brandRepository.count() == 0) {
                 log.info("Initializing brands...");
