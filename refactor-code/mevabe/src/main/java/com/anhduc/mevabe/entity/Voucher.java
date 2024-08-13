@@ -29,6 +29,7 @@ public class Voucher extends AuditAble{
     @Enumerated(EnumType.STRING)
     VoucherType voucherType;
     BigDecimal value;
+    BigDecimal minOrderValue;
     int maxUses;
     int currentUses;
     LocalDateTime expiryDate;
@@ -38,4 +39,5 @@ public class Voucher extends AuditAble{
     Set<Product> products;
     @OneToOne(mappedBy = "voucher")
     Order order;
+
 }

@@ -24,6 +24,7 @@ public class User extends AuditAble{
     String password;
     String firstName;
     String lastName;
+    int rewardPoints;
     @ManyToMany
     Set<Role> roles;
 }

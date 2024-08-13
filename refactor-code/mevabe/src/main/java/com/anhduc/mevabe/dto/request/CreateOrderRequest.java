@@ -2,6 +2,7 @@ package com.anhduc.mevabe.dto.request;
 
 import com.anhduc.mevabe.entity.OrderItem;
 import com.anhduc.mevabe.entity.User;
+import com.anhduc.mevabe.entity.Voucher;
 import com.anhduc.mevabe.enums.OrderStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,6 +21,7 @@ public class CreateOrderRequest {
     BigDecimal totalPrice;
     @Enumerated(EnumType.STRING)
     OrderStatus status;
+    String voucherCode;
     User user;
     List<OrderItemRequest> orderItems;
 }
