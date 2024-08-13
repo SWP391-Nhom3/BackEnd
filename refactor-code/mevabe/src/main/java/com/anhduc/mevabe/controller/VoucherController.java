@@ -1,22 +1,18 @@
 package com.anhduc.mevabe.controller;
 
-import com.anhduc.mevabe.dto.request.CreateProductRequest;
 import com.anhduc.mevabe.dto.request.CreateVoucherRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
-import com.anhduc.mevabe.dto.response.ProductResponse;
 import com.anhduc.mevabe.dto.response.VoucherResponse;
-import com.anhduc.mevabe.service.ProductService;
 import com.anhduc.mevabe.service.VoucherService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
