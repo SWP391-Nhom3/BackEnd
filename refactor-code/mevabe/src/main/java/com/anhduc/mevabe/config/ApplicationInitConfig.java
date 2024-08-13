@@ -14,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Calendar;
 import java.util.Date;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -250,4 +249,3 @@ public class ApplicationInitConfig {
             }
         };
     }
-}
