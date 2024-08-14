@@ -5,7 +5,9 @@ import com.anhduc.mevabe.entity.Category;
 import com.anhduc.mevabe.entity.User;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,9 +24,11 @@ import java.util.UUID;
 public class ProductResponse {
     UUID id;
     String name;
+    @Size(max = 200000)
     String description;
     BigDecimal price;
     int stockQuantity;
+    boolean isActive;
     List<String> imageUrl;
     String coverImageUrl;
     Brand brand;

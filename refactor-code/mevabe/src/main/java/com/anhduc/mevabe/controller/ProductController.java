@@ -1,6 +1,6 @@
 package com.anhduc.mevabe.controller;
 
-import com.anhduc.mevabe.dto.request.CreateProductRequest;
+import com.anhduc.mevabe.dto.request.*;
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import com.anhduc.mevabe.dto.response.ProductResponse;
 import com.anhduc.mevabe.service.ProductService;
@@ -57,5 +57,12 @@ public class ProductController {
     ApiResponse<ProductResponse> update(@ModelAttribute @Valid CreateProductRequest request, @PathVariable UUID id) throws IOException {
         return ApiResponse.<ProductResponse>builder()
                 .data(productService.update(id, request)).build();
+    }
+
+    @PatchMapping("/{id}/status")
+    ApiResponse<ProductResponse> updateStatus(@PathVariable UUID id) {
+        return ApiResponse.<ProductResponse>builder()
+                .data(productService.updateStatus(id))
+                .build();
     }
 }
