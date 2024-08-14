@@ -20,6 +20,7 @@ public enum ErrorCode {
     PASSWORD_EXISTED(1010, "Password already existed", HttpStatus.CONFLICT),
     PRODUCT_NOT_FOUND(1011, "Product not found", HttpStatus.NOT_FOUND),
     ORDER_NOT_FOUND(1012, "Order not found", HttpStatus.NOT_FOUND),
+    VOUCHER_INVALID(1013, "Voucher is not valid.", HttpStatus.NOT_FOUND),
     ;
 
     private final int code;

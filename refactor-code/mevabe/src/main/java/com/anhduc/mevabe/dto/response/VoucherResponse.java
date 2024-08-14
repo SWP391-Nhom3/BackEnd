@@ -30,4 +30,5 @@ public class VoucherResponse {
     BigDecimal value;
     int maxUses;
     int currentUses;
+
 }
