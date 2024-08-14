@@ -5,6 +5,7 @@ import com.anhduc.mevabe.dto.response.CategoryResponse;
 import com.anhduc.mevabe.dto.response.VoucherResponse;
 import com.anhduc.mevabe.entity.Category;
 import com.anhduc.mevabe.entity.Voucher;
+import com.anhduc.mevabe.enums.VoucherType;
 import com.anhduc.mevabe.repository.VoucherRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,8 +29,12 @@ public class VoucherService {
     ModelMapper modelMapper;
 
     public VoucherResponse create(VoucherRequest request) {
-        Voucher voucher = modelMapper.map(request, Voucher.class);
+        Voucher voucher = new Voucher();
         voucher.setCode(generateUniqueCode());
+        voucher.setVoucherType(request.getType());
+        voucher.setValue(request.getValue());
+        voucher.setMaxUses(request.getMaxUses());
+        voucher.setExpiryDate(request.getExpiryDate());
         voucherRepository.save(voucher);
         return modelMapper.map(voucher, VoucherResponse.class);
     }

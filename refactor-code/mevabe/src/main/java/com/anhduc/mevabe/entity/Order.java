@@ -44,7 +44,7 @@ public class Order extends AuditAble{
     BigDecimal totalPrice;
 
     @OneToOne
-    @JoinColumn(name = "voucher_id")
+    @JoinColumn(name = "voucher_id", referencedColumnName = "id")
     private Voucher voucher;
 
     @ManyToOne
