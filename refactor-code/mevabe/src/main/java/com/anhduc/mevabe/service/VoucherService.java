@@ -28,6 +28,7 @@ public class VoucherService {
     VoucherRepository voucherRepository;
     ModelMapper modelMapper;
 
+
     public VoucherResponse create(VoucherRequest request) {
         Voucher voucher = new Voucher();
         voucher.setCode(generateUniqueCode());
@@ -57,4 +58,5 @@ public class VoucherService {
     private VoucherResponse convert(Voucher voucher) {
         return modelMapper.map(voucher, VoucherResponse.class);
     }
+
 }

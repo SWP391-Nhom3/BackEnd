@@ -118,4 +118,14 @@ public class ProductService {
     private ProductResponse convert(Product product) {
         return modelMapper.map(product, ProductResponse.class);
     }
+
+    public ProductResponse updateStatus(UUID id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new AppException(ErrorCode.PRODUCT_NOT_FOUND)
+        );
+        product.setActive(!product.isActive());
+        Product updatedProduct = productRepository.save(product);
+        return convert(updatedProduct);
+    }
+
 }
