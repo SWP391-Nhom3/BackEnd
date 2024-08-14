@@ -12,26 +12,23 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VoucherResponse {
 
-     UUID id;
-     String code;
-     VoucherType voucherType;
-     BigDecimal value;
-     BigDecimal minOrderValue;
-     int maxUses;
-     int currentUses;
-     LocalDateTime expiryDate;
-     VoucherStatus status;
-     Set<Product> products;
-     Order order;
+    UUID id;
+    String code;
+    VoucherType voucherType;
+    BigDecimal value;
+    int maxUses;
+    int currentUses;
+
 }

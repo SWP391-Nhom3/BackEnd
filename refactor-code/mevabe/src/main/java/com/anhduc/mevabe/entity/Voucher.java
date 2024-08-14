@@ -2,6 +2,7 @@ package com.anhduc.mevabe.entity;
 
 import com.anhduc.mevabe.enums.VoucherStatus;
 import com.anhduc.mevabe.enums.VoucherType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -37,7 +38,8 @@ public class Voucher extends AuditAble{
     VoucherStatus status;
     @ManyToMany
     Set<Product> products;
-    @OneToOne(mappedBy = "voucher")
+    @OneToOne(mappedBy = "voucher", optional = true)
+    @JsonIgnore
     Order order;
 
 }
