@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -26,6 +23,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Transactional
 public class OrderService {
+
     @Autowired
     OrderRepository orderRepository;
 
@@ -39,6 +37,9 @@ public class OrderService {
     BatchService productBatchService;
 
     @Autowired
+    ProductRepository productRepository;
+
+    @Autowired
     OrderStatusRepository orderStatusRepository;
 
     public List<Order> getAllOrders() {
@@ -49,56 +50,101 @@ public class OrderService {
         return orderRepository.findById(orderId);
     }
 
+    public Order createOrder(CreateOrderRequest createOrderRequest) {
+        OrderStatus status = orderStatusRepository.findByName("Chờ xác nhận")
+                .orElseThrow(() -> new RuntimeException("Order status 'Chờ xác nhận' not found"));
 
-    @Transactional
-    public Order createOrder(Order order) {
-        for (OrderDetail detail : order.getOrderDetails()) {
-            UUID productId = detail.getProductBatch().getProduct().getId();
-            int totalAvailableQuantity = productBatchService.getTotalAvailableQuantity(productId);
-            if (totalAvailableQuantity < detail.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product: " + detail.getProductBatch().getProduct().getName());
-            }
+        Order order = Order.builder()
+                .fullName(createOrderRequest.getFullName())
+                .address(createOrderRequest.getAddress())
+                .phone(createOrderRequest.getPhone())
+                .email(createOrderRequest.getEmail())
+                .paymentMethod(createOrderRequest.getPaymentMethod())
+                .requiredDate(createOrderRequest.getRequiredDate())
+                .shipFee(createOrderRequest.getShipFee())
+                .totalPrice(createOrderRequest.getTotalPrice())
+                .voucherCode(createOrderRequest.getVoucherCode())
+                .orderStatus(status)
+                .build();
 
-            reserveStock(detail);
-        }
-        return orderRepository.save(order);
-    }
+        List<OrderDetail> orderDetails = new ArrayList<>();
 
-    @Transactional
-    public void confirmOrder(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        for (CreateOrderRequest.OrderDetailRequest detailRequest : createOrderRequest.getOrderDetails()) {
+            Product product = productRepository.findById(detailRequest.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        for (OrderDetail detail : order.getOrderDetails()) {
-            int remainingQuantity = detail.getQuantity();
-            List<Batch> productBatches = productBatchRepository.findByProductIdAndExpiryDateAfter(detail.getProductBatch().getProduct().getId(), new Date());
+            int remainingQuantity = detailRequest.getQuantity();
+
+            List<Batch> productBatches = productBatchRepository.findByProductIdOrderByExpiryDateAsc(product.getId());
 
             for (Batch batch : productBatches) {
                 int availableInBatch = batch.getQuantity() - batch.getSold();
 
                 if (availableInBatch >= remainingQuantity) {
+                    OrderDetail orderDetail = OrderDetail.builder()
+                            .order(order)  // Liên kết với Order
+                            .product(product)
+                            .productBatch(batch)
+                            .quantity(remainingQuantity)
+                            .build();
+
+                    orderDetails.add(orderDetail);
                     batch.setSold(batch.getSold() + remainingQuantity);
                     productBatchRepository.save(batch);
+
+                    remainingQuantity = 0;
                     break;
-                } else {
-                    batch.setSold(batch.getQuantity());
+                } else if (availableInBatch > 0) {
+                    OrderDetail orderDetail = OrderDetail.builder()
+                            .order(order)  // Liên kết với Order
+                            .product(product)
+                            .productBatch(batch)
+                            .quantity(availableInBatch)
+                            .build();
+
+                    orderDetails.add(orderDetail);
                     remainingQuantity -= availableInBatch;
-                    productBatchRepository.save(batch);
                 }
             }
 
             if (remainingQuantity > 0) {
-                throw new RuntimeException("Insufficient stock to confirm the order for product: " + detail.getProductBatch().getProduct().getName());
+                throw new RuntimeException("Insufficient stock for product: " + product.getName());
             }
         }
-        order.setOrderStatus(orderStatusRepository.findByName("Đã xác nhận")
-                .orElseThrow(() -> new RuntimeException("Order status not found")));
 
-        orderRepository.save(order);
+        order.setOrderDetails(orderDetails);
+        Order savedOrder = orderRepository.save(order);
+        return savedOrder;
+    }
+
+    @Transactional
+    public Order confirmOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // Kiểm tra trạng thái hiện tại của đơn hàng
+        if (!order.getOrderStatus().getName().equalsIgnoreCase("Chờ xác nhận")) {
+            throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
+        }
+
+        OrderStatus confirmedStatus = orderStatusRepository.findByName("Đã xác nhận")
+                .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
+        order.setOrderStatus(confirmedStatus);
+
+        // Cập nhật thông tin về số lượng sản phẩm trong kho
+        for (OrderDetail detail : order.getOrderDetails()) {
+            Batch batch = detail.getProductBatch();
+            batch.setSold(batch.getSold() + detail.getQuantity());
+            productBatchRepository.save(batch);
+            updateProductStockQuantity(batch.getProduct());
+        }
+
+        return orderRepository.save(order);
     }
 
     private void reserveStock(OrderDetail detail) {
-        List<Batch> productBatches = productBatchRepository.findByProductIdAndExpiryDateAfter(detail.getProductBatch().getProduct().getId(), new Date());
+        List<Batch> productBatches = productBatchRepository.findByProductIdAndExpiryDateAfter(
+                detail.getProductBatch().getProduct().getId(), new Date());
 
         int remainingQuantity = detail.getQuantity();
         for (Batch batch : productBatches) {
@@ -123,12 +169,44 @@ public class OrderService {
     public Order updateOrderStatus(UUID orderId, String statusName) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-
-        // Fetch and set the new order status
         OrderStatus orderStatus = orderStatusRepository.findByName(statusName)
                 .orElseThrow(() -> new RuntimeException("Order status not found"));
 
         order.setOrderStatus(orderStatus);
         return orderRepository.save(order);
+    }
+
+    @Transactional
+    public Order cancelOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // Kiểm tra trạng thái hiện tại của đơn hàng
+        if (!order.getOrderStatus().getName().equalsIgnoreCase("Chờ xác nhận")) {
+            throw new RuntimeException("Order cannot be canceled because it is not in 'Chờ xác nhận' status.");
+        }
+
+        OrderStatus canceledStatus = orderStatusRepository.findByName("Đã hủy")
+                .orElseThrow(() -> new RuntimeException("Order status 'Đã hủy' not found"));
+
+        order.setOrderStatus(canceledStatus);
+        return orderRepository.save(order);
+    }
+
+    private void updateProductStockQuantity(Product product) {
+        List<Batch> productBatches = productBatchRepository.findByProductIdOrderByExpiryDateAsc(product.getId());
+
+        int totalQuantity = 0;
+        int totalSold = 0;
+
+        for (Batch batch : productBatches) {
+            totalQuantity += batch.getQuantity();
+            totalSold += batch.getSold();
+        }
+
+        int stockQuantity = totalQuantity - totalSold;
+        product.setStockQuantity(stockQuantity);
+
+        productRepository.save(product);
     }
 }

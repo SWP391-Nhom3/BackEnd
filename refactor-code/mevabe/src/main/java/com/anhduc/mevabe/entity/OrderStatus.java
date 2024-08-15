@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,6 +24,7 @@ public class OrderStatus{
     String name;
 
     @OneToMany(mappedBy = "orderStatus")
+    @JsonIgnore
     private List<Order> orders;
 
     public OrderStatus(String name){this.name = name;}

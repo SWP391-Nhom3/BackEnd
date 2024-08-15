@@ -41,7 +41,8 @@ public class ApplicationInitConfig {
                 List<OrderStatus> orderStatuses = List.of(
                         new OrderStatus("Chờ xác nhận"),
                         new OrderStatus("Đã xác nhận"),
-                        new OrderStatus("Hoàn thành")
+                        new OrderStatus("Hoàn thành"),
+                        new OrderStatus("Đã hủy")
                 );
 
                 orderStatusRepository.saveAll(orderStatuses);

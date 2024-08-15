@@ -35,9 +35,14 @@ public class BatchService {
         Product product = productRepository.findById(request.getProduct().getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         Batch batch = modelMapper.map(request, Batch.class);
+        // Kiểm tra tại đây để đảm bảo rằng không có logic nào vô tình thay đổi giá
         int counter = batchRepository.countByManufactureDate(batch.getManufactureDate()) + 1;
         batch.generateBatchNumber(counter);
         product.setStockQuantity((int) (product.getStockQuantity() + request.getQuantity()));
+
+        // Nếu cần, bạn có thể kiểm tra giá trị của price tại đây trước khi lưu:
+        System.out.println("Price trước khi lưu: " + product.getPrice());
+
         batchRepository.save(batch);
     }
 

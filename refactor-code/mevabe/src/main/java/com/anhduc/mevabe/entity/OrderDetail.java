@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,11 +25,15 @@ public class OrderDetail {
     Integer quantity;
 
     @ManyToOne
-    @JoinColumn(name = "orderId", insertable = false, updatable = false)
+    @JoinColumn(name = "orderId", nullable = false) // Bỏ insertable và updatable
+    @JsonIgnore
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "batchId", insertable = false, updatable = false)
+    @JoinColumn(name = "batchId", nullable = false) // Bỏ insertable và updatable
     private Batch productBatch;
 
+    @ManyToOne
+    @JoinColumn(name = "productId", nullable = false) // Bỏ insertable và updatable
+    private Product product;
 }

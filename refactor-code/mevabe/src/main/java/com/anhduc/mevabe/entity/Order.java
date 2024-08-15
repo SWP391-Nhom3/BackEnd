@@ -6,9 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -19,18 +17,22 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "orders")
-public class Order extends AuditAble{
+public class Order extends AuditAble {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID Id;
-    //    Long memId;
-//    Long staffId;
+    UUID id;
+
     String voucherCode;
+
     String fullName;
+
     String address;
+
     String phone;
+
     String email;
+
     String paymentMethod;
 
     @Temporal(TemporalType.DATE)
@@ -43,16 +45,17 @@ public class Order extends AuditAble{
     Date shippedDate;
 
     BigDecimal shipFee;
+
     BigDecimal totalPrice;
 
     @OneToOne
-    @JoinColumn(name = "voucher_id", referencedColumnName = "id")
+    @JoinColumn(name = "voucher_id", referencedColumnName = "id", nullable = true)
     private Voucher voucher;
 
     @ManyToOne
-    @JoinColumn(name = "statusId", insertable = false, updatable = false)
+    @JoinColumn(name = "statusId")
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderDetail> orderDetails;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 }
