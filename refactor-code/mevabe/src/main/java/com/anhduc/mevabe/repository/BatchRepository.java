@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface BatchRepository extends JpaRepository<Batch, UUID> {
     int countByManufactureDate(Date manufactureDate);
-    List<Batch> findByProductIdAndExpiryDateAfterOrderByManufactureDateAsc(UUID productId, Date expiryDate);
+    List<Batch> findByProductIdAndExpiryDateAfter(UUID productId, Date currentDate);
 }
