@@ -24,6 +24,7 @@ public class BatchResponse {
     Date manufactureDate;
     Date expiryDate;
     Long quantity;
+    Integer sold=0;
     private LocalDateTime createdAt;
     Product product;
 }

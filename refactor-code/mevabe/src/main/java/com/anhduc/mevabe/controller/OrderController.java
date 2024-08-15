@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.controller;
 
+import com.anhduc.mevabe.dto.request.CreateOrderRequest;
 import com.anhduc.mevabe.entity.Order;
 import com.anhduc.mevabe.service.OrderService;
 import lombok.AccessLevel;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +27,8 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order createdOrder = orderService.createOrder(order);
+    public ResponseEntity<Order> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
+        Order createdOrder = orderService.createOrder(createOrderRequest);
         return ResponseEntity.ok(createdOrder);
     }
 
@@ -43,11 +45,29 @@ public class OrderController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{orderId}/status")
-    public ResponseEntity<Order> updateOrderStatus(
-            @PathVariable UUID orderId,
-            @RequestParam String status) {
-        Order updatedOrder = orderService.updateOrderStatus(orderId, status);
-        return ResponseEntity.ok(updatedOrder);
+    @PutMapping("/confirm/{orderId}")
+    public ResponseEntity<Order> confirmOrder(@PathVariable UUID orderId) {
+        try {
+            Order confirmedOrder = orderService.confirmOrder(orderId);
+            return ResponseEntity.ok(confirmedOrder);
+        } catch (RuntimeException e) {
+            // In log lỗi để kiểm tra
+            System.err.println("Error in confirmOrder: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<Order> cancelOrder(@PathVariable UUID orderId) {
+        try {
+            Order canceledOrder = orderService.cancelOrder(orderId);
+            return ResponseEntity.ok(canceledOrder);
+        } catch (RuntimeException e) {
+            // In log lỗi để kiểm tra
+            System.err.println("Error in cancelOrder: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 }
