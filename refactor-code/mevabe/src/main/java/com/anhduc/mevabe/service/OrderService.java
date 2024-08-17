@@ -145,7 +145,7 @@ public class OrderService {
             throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
         }
 
-        OrderStatus confirmedStatus = orderStatusRepository.findByName("Đã xác nhận")
+        OrderStatus confirmedStatus = orderStatusRepository.findByName("Đang giao hàng")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
         order.setOrderStatus(confirmedStatus);
         order.setAcceptedDate(now);
@@ -154,13 +154,50 @@ public class OrderService {
     }
 
     @Transactional
-    public Order updateOrderStatus(UUID orderId, String statusName) {
+    public Order shippingOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        OrderStatus orderStatus = orderStatusRepository.findByName(statusName)
-                .orElseThrow(() -> new RuntimeException("Order status not found"));
+        LocalDateTime now = LocalDateTime.now();
 
-        order.setOrderStatus(orderStatus);
+        if (!order.getOrderStatus().getName().equalsIgnoreCase("Đang giao hàng")) {
+            throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
+        }
+
+        OrderStatus confirmedStatus = orderStatusRepository.findByName("Hoàn thành")
+                .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
+        order.setOrderStatus(confirmedStatus);
+        order.setShippedDate(now);
+
+        return orderRepository.save(order);
+    }
+
+    @Transactional
+    public Order cancelShippingOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        LocalDateTime now = LocalDateTime.now();
+
+        if (!order.getOrderStatus().getName().equalsIgnoreCase("Đang giao hàng")) {
+            throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
+        }
+
+        OrderStatus confirmedStatus = orderStatusRepository.findByName("Giao hàng không thành công")
+                .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
+
+        for (OrderDetail orderDetail : order.getOrderDetails()) {
+            Batch batch = orderDetail.getProductBatch();
+            Product product = orderDetail.getProduct();
+            batch.setSold(batch.getSold() - orderDetail.getQuantity());
+            productBatchRepository.save(batch);
+            int totalStockQuantity = productBatchRepository.findByProductIdOrderByExpiryDateAsc(product.getId()).stream()
+                    .mapToInt(b -> b.getQuantity() - b.getSold())
+                    .sum();
+            product.setStockQuantity(totalStockQuantity);
+            productRepository.save(product);
+        }
+
+        order.setOrderStatus(confirmedStatus);
+
         return orderRepository.save(order);
     }
 
@@ -177,18 +214,11 @@ public class OrderService {
         OrderStatus canceledStatus = orderStatusRepository.findByName("Đã hủy")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đã hủy' not found"));
 
-        // Trả hàng lại về các lô hàng và cập nhật số lượng tồn kho
         for (OrderDetail orderDetail : order.getOrderDetails()) {
             Batch batch = orderDetail.getProductBatch();
             Product product = orderDetail.getProduct();
-
-            // Giảm số lượng đã bán của lô hàng (batch)
             batch.setSold(batch.getSold() - orderDetail.getQuantity());
-
-            // Cập nhật lại batch
             productBatchRepository.save(batch);
-
-            // Tính toán lại số lượng tồn kho của sản phẩm
             int totalStockQuantity = productBatchRepository.findByProductIdOrderByExpiryDateAsc(product.getId()).stream()
                     .mapToInt(b -> b.getQuantity() - b.getSold())
                     .sum();

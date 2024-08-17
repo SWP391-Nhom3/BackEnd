@@ -40,10 +40,11 @@ public class ApplicationInitConfig {
 
                 List<OrderStatus> orderStatuses = List.of(
                         new OrderStatus("Chờ xác nhận"),
-                        new OrderStatus("Đã xác nhận"),
-                        new OrderStatus("Giao thành công"),
+                        new OrderStatus("Đang giao hàng"),
+                        new OrderStatus("Đặt trước"),
                         new OrderStatus("Đã hủy"),
-                        new OrderStatus("Giao hàng không thành công")
+                        new OrderStatus("Giao hàng không thành công"),
+                        new OrderStatus("Hoàn thành")
                 );
 
                 orderStatusRepository.saveAll(orderStatuses);
