@@ -15,12 +15,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CreateOrderRequest {
 
+
+    private UUID userId = null;
     private String fullName;
     private String address;
     private String phone;
     private String email;
     private String paymentMethod;
-    private Date requiredDate;
     private BigDecimal shipFee;
     private BigDecimal totalPrice;
     private String voucherCode;

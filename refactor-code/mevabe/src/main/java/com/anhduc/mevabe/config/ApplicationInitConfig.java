@@ -41,8 +41,9 @@ public class ApplicationInitConfig {
                 List<OrderStatus> orderStatuses = List.of(
                         new OrderStatus("Chờ xác nhận"),
                         new OrderStatus("Đã xác nhận"),
-                        new OrderStatus("Hoàn thành"),
-                        new OrderStatus("Đã hủy")
+                        new OrderStatus("Giao thành công"),
+                        new OrderStatus("Đã hủy"),
+                        new OrderStatus("Giao hàng không thành công")
                 );
 
                 orderStatusRepository.saveAll(orderStatuses);
@@ -202,8 +203,13 @@ public class ApplicationInitConfig {
                 adminRole.setDescription("Admin role");
                 adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
 
+                Role shipperRole = new Role();
+                adminRole.setName("SHIPPER");
+                adminRole.setDescription("Ship role");
+                adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
+
                 // Save roles to the database
-                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole));
+                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole, shipperRole));
 
                 // Create users with corresponding roles
 //                User guestUser = User.builder()
