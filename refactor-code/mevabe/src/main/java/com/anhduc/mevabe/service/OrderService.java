@@ -90,7 +90,6 @@ public class OrderService {
 
                     orderDetails.add(orderDetail);
                     batch.setSold(batch.getSold() + remainingQuantity);
-                    productBatchRepository.save(batch);
 
                     remainingQuantity = 0;
                     break;
