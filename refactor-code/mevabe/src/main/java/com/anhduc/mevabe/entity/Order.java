@@ -1,11 +1,14 @@
 package com.anhduc.mevabe.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -35,14 +38,11 @@ public class Order extends AuditAble {
 
     String paymentMethod;
 
-    @Temporal(TemporalType.DATE)
-    Date requiredDate;
+    LocalDateTime requiredDate;
 
-    @Temporal(TemporalType.DATE)
-    Date acceptedDate;
+    LocalDateTime acceptedDate;
 
-    @Temporal(TemporalType.DATE)
-    Date shippedDate;
+    LocalDateTime shippedDate;
 
     BigDecimal shipFee;
 
@@ -58,4 +58,12 @@ public class Order extends AuditAble {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User member;
+
+    @OneToOne
+    @JoinColumn(name = "shipper_id", referencedColumnName = "id")
+    private User shipper;
 }
