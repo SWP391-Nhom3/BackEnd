@@ -22,5 +22,6 @@ public class UserResponse {
      String address;
      Integer point;
      Boolean noPassword;
+     Boolean active;
      Set<RoleResponse> roles;
 }
