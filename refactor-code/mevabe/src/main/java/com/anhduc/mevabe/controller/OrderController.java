@@ -51,7 +51,6 @@ public class OrderController {
             Order confirmedOrder = orderService.confirmOrder(orderId);
             return ResponseEntity.ok(confirmedOrder);
         } catch (RuntimeException e) {
-            // In log lỗi để kiểm tra
             System.err.println("Error in confirmOrder: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -64,7 +63,30 @@ public class OrderController {
             Order canceledOrder = orderService.cancelOrder(orderId);
             return ResponseEntity.ok(canceledOrder);
         } catch (RuntimeException e) {
-            // In log lỗi để kiểm tra
+            System.err.println("Error in cancelOrder: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PutMapping("/cancel-shipping/{orderId}")
+    public ResponseEntity<Order> cancelShippingOrder(@PathVariable UUID orderId) {
+        try {
+            Order canceledOrder = orderService.cancelShippingOrder(orderId);
+            return ResponseEntity.ok(canceledOrder);
+        } catch (RuntimeException e) {
+            System.err.println("Error in cancelOrder: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PutMapping("/shipping/{orderId}")
+    public ResponseEntity<Order> shippingOrder(@PathVariable UUID orderId) {
+        try {
+            Order canceledOrder = orderService.shippingOrder(orderId);
+            return ResponseEntity.ok(canceledOrder);
+        } catch (RuntimeException e) {
             System.err.println("Error in cancelOrder: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
