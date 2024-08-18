@@ -15,13 +15,8 @@ services:
       OAUTH2_GOOGLE_CLIENT_ID: "229203659707-kpvju7vl0mpc0j4gnd2s5eiclnuoaf6q.apps.googleusercontent.com"
       OAUTH2_GOOGLE_CLIENT_SECRET: "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"
       OAUTH2_GOOGLE_REDIRECT_URI: "http://localhost:8081/login/oauth2/code/google"  # Adjust as needed
-    depends_on:
-      - mysql
     networks:
       - milkjoy-network
-
-volumes:
-  mysql-data:
 
 networks:
   milkjoy-network:
