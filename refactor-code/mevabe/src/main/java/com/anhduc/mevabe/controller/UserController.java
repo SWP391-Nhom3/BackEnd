@@ -5,6 +5,8 @@ import com.anhduc.mevabe.dto.request.UserCreationRequest;
 import com.anhduc.mevabe.dto.request.UserUpdateRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import com.anhduc.mevabe.dto.response.UserResponse;
+import com.anhduc.mevabe.entity.User;
+import com.anhduc.mevabe.repository.UserRepository;
 import com.anhduc.mevabe.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -85,5 +87,13 @@ public class UserController {
     ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .data(userService.updateMyInfo(request)).build();
+    }
+
+    @PutMapping("/status/{userId}")
+    public ApiResponse<UserResponse> updateStatus(@PathVariable UUID userId) {
+        UserResponse userResponse = userService.updateStatus(userId);
+        return ApiResponse.<UserResponse>builder()
+                .data(userResponse)
+                .build();
     }
 }

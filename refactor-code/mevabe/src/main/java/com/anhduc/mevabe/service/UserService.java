@@ -58,6 +58,7 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
+        user.setActive(true);
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }
@@ -83,6 +84,15 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse updateStatus(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setActive(!user.isActive());
+        userRepository.save(user);
+        return modelMapper.map(user, UserResponse.class);
     }
 
     public void delete(UUID userId) {

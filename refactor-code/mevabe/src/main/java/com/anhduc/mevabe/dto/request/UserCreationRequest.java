@@ -16,6 +16,7 @@ public class UserCreationRequest {
     String email;
     @Size(min = 8, message = "PASSWORD_INCORRECT_FORMAT")
     String password;
+    Boolean active;
 //    String firstName;
 //    String lastName;
 //    private String phone;
