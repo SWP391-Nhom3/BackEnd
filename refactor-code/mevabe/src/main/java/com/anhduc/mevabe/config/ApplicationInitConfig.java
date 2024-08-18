@@ -204,13 +204,9 @@ public class ApplicationInitConfig {
                 adminRole.setDescription("Admin role");
                 adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
 
-                Role shipperRole = new Role();
-                adminRole.setName("SHIPPER");
-                adminRole.setDescription("Ship role");
-                adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
 
                 // Save roles to the database
-                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole, shipperRole));
+                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole));
 
                 // Create users with corresponding roles
 //                User guestUser = User.builder()
