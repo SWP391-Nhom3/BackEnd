@@ -1,6 +1,19 @@
 
 
 spring:
+  mail:
+    host: smtp.gmail.com
+    username: ducnase161841@fpt.edu.vn
+    password: reuo hmmc hcuu zzob
+    port: 587
+    default-encoding: UTF-8
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   datasource:
     url: jdbc:mysql://swp391.mysql.database.azure.com:3306/milkjoy?createDatabaseIfNotExist=true
     username: milkjoyadmin

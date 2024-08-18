@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .total {
+            text-align: right;
+        }
+        .total td {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Hóa Đơn Mua Hàng: <span style="color: blue; font-weight: bold">#<span th:text="${order.id}"></span></h2>
+    <div class="details">
+        <p><strong>Tên khách hàng:</strong> <span th:text="${order.fullName}"></span></p>
+        <p><strong>Địa chỉ:</strong> <span th:text="${order.address}"></span></p>
+        <p><strong>Số điện thoại:</strong> <span th:text="${order.phone}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${order.email}"></span></p>
+        <p><strong>Phương thức thanh toán:</strong> <span th:text="${order.paymentMethod}"></span></p>
+        <p><strong>Ngày đặt:</strong> <span th:text="${#dates.format(order.requiredDate, 'dd/MM/yyyy')}"></span></p>
+        <p><strong>Ngày xác nhận:</strong> <span th:text="${#dates.format(order.acceptedDate, 'dd/MM/yyyy')}"></span></p>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tổng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${orderDetails}">
+            <td th:text="${item.productName}"></td>
+            <td th:text="${item.amount}"></td>
+            <td th:text="${#numbers.formatNumber(item.price, 0, 'VND', ',')}"></td>
+            <td th:text="${#numbers.formatNumber(item.price * item.amount, 0, 'VND', ',')}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3" class="total">Tổng cộng: </td>
+            <td th:text="${#numbers.formatNumber(order.totalPrice - order.shipFee + order.voucherFee, 0, 'VND', ',')}"></td>
+        </tr>
+        <tr>
+            <td colspan="3" class="total">Phí vận chuyển: </td>
+            <td th:text="${#numbers.formatNumber(order.shipFee, 0, 'VND', ',')}"></td>
+        </tr>
+        <tr>
+            <td colspan="3" class="total">Mã giảm giá: </td>
+            <td th:text="${#numbers.formatNumber(order.voucherFee, 0, 'VND', ',')}"></td>
+        </tr>
+        <tr>
+            <td colspan="3" class="total">Tổng cộng</td>
+            <td th:text="${#numbers.formatNumber(order.totalPrice, 0, 'VND', ',')}"></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>
+</body>
+</html>
