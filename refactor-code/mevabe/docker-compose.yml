@@ -1,26 +1,14 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456789
-      MYSQL_DATABASE: MilkJoy
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - milkjoy-network
-
   mevabe-backend:
     image: cuong3103/milk-joy:first
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/MilkJoy?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: 123456789
+      SPRING_DATASOURCE_URL: jdbc:mysql://swp391.mysql.database.azure.com:3306/milkjoy?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: milkjoyadmin
+      SPRING_DATASOURCE_PASSWORD: Swp@123456
       SPRING_JWT_SIGNERKEY: mlurGuNCJ+kaZjah59zjCFpJYkCMGYyf0ttiTvlwhJyhjcFaH0pNy/iZ3ySF0yQ5
       SPRING_JWT_TOKENEXPIRYTIME: 20
       SPRING_JWT_REFRESHTOKENEXPIRATION: 120
