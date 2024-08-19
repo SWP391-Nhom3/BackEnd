@@ -23,19 +23,21 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: |
+          cd mevabe
+          mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: 'mevabe/target/*.jar'
 
   deploy:
     runs-on: windows-latest
     needs: build
     environment:
-      name: 'Production'
+      name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     
     steps:
@@ -49,6 +51,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'milkjoy-shop'
-          slot-name: 'Production'
-          package: '*.jar'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5CAC9F0F111C4F7981CEA1D56C600685 }}
+          slot-name: 'production'
+          package: 'mevabe/target/*.jar'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_8ba599bde33e42a4bb3443f1993b3c49 }}
