@@ -38,6 +38,14 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/register")
+    public ApiResponse<AuthenticationResponse> register(@RequestBody AuthenticationRequest request) {
+        var result = authenticationService.register(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .data(result)
+                .build();
+    }
+
     @PostMapping("/refresh")
     public ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
             throws ParseException, JOSEException {

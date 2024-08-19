@@ -36,9 +36,6 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
-    public UserResponse registerUser(UserCreationRequest request) {
-        return createUser(request, "MEMBER");
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse createStaff(UserCreationRequest request) {
@@ -59,6 +56,7 @@ public class UserService {
         roles.add(role);
         user.setRoles(roles);
         user.setActive(true);
+        user.setPoint(0);
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }

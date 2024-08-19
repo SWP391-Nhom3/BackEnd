@@ -34,13 +34,6 @@ public class UserController {
 //                .build();
 //    }
 
-    @PostMapping("/register")
-    public ApiResponse<UserResponse> registerUser(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.<UserResponse>builder()
-                .data(userService.registerUser(request))
-                .build();
-    }
-
     @PostMapping("/create-staff")
     public ApiResponse<UserResponse> createStaff(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
