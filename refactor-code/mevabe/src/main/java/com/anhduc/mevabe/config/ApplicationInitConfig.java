@@ -97,6 +97,7 @@ public class ApplicationInitConfig {
                 user.setLastName("admin");
                 user.setRoles(roles);
                 user.setActive(true);
+                user.setPoint(0);
                 userRepository.save(user);
                 log.warn("Account admin has been created with email admin@gmail.com and password admin");
             }
@@ -205,9 +206,13 @@ public class ApplicationInitConfig {
                 adminRole.setDescription("Admin role");
                 adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
 
+                Role shipperRole = new Role();
+                adminRole.setName("SHIPPER");
+                adminRole.setDescription("Shiper role");
+
 
                 // Save roles to the database
-                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole));
+                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole, shipperRole));
 
                 // Create users with corresponding roles
 //                User guestUser = User.builder()
@@ -224,6 +229,7 @@ public class ApplicationInitConfig {
                         .active(true)
                         .firstName("Member")
                         .lastName("User")
+                        .point(0)
                         .roles(Set.of(memberRole))
                         .build();
 
@@ -233,6 +239,7 @@ public class ApplicationInitConfig {
                         .active(true)
                         .firstName("Staff")
                         .lastName("User")
+                        .point(0)
                         .roles(Set.of(staffRole))
                         .build();
 
@@ -241,12 +248,33 @@ public class ApplicationInitConfig {
                         .password(passwordEncoder.encode("adminpassword"))
                         .active(true)
                         .firstName("Admin")
+                        .point(0)
+                        .lastName("User")
+                        .roles(Set.of(adminRole))
+                        .build();
+
+                User Shipper1 = User.builder()
+                        .email("shipper@example.com")
+                        .password(passwordEncoder.encode("shipperpassword"))
+                        .active(true)
+                        .firstName("Shipper")
+                        .point(0)
+                        .lastName("User")
+                        .roles(Set.of(adminRole))
+                        .build();
+
+                User Shipper2 = User.builder()
+                        .email("shipper@gmail.com")
+                        .password(passwordEncoder.encode("shipperpassword"))
+                        .active(true)
+                        .firstName("Shipper")
+                        .point(0)
                         .lastName("User")
                         .roles(Set.of(adminRole))
                         .build();
 
                 // Save users to the database
-                userRepository.saveAll(List.of(memberUser, staffUser, adminUser));
+                userRepository.saveAll(List.of(memberUser, staffUser, adminUser, Shipper1, Shipper2));
 
                 log.warn("Member account: member@example.com. password: memberpassword");
                 log.warn("Staff account: staff@example.com. password: staffpassword");

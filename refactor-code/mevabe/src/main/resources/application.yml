@@ -15,15 +15,15 @@ spring:
           starttls:
             enable: true
   datasource:
-    url: jdbc:mysql://swp391.mysql.database.azure.com:3306/milkjoy?createDatabaseIfNotExist=true
-    username: milkjoyadmin
-    password: Swp@123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/MilkJoy?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
+    username: root
+    password: 123456789
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    # dùng sqlserver mở đoạn này
+
+      # dùng sqlserver mở đoạn này
 #  datasource:
 #    url: jdbc:sqlserver://localhost:1433;databaseName=user-management;encrypt=true;trustServerCertificate=true;
 #    username: your_sqlserver_username

@@ -89,6 +89,30 @@ public class AuthenticationService {
 
     }
 
+    public AuthenticationResponse register(AuthenticationRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        Role role = roleRepository.findByName("MEMBER").get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .point(0)
+                .roles(roles)
+                .build();
+
+        userRepository.save(user);
+        var token = generateToken(user);
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        return AuthenticationResponse.builder()
+                .accessToken(token)
+                .user(userResponse)
+                .build();
+    }
+
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
