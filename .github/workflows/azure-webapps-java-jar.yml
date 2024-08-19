@@ -48,7 +48,7 @@ jobs:
 
       - name: Build with Maven
         run: |
-          cd refactor-code\mevabe
+          cd refactor-code/mevabe
           mvn clean install
 
       - name: Upload artifact for deployment job
