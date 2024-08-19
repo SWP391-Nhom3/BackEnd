@@ -106,13 +106,13 @@ public class OrderService {
                     break;
                 } else if (availableInBatch > 0) {
                     OrderDetail orderDetail = OrderDetail.builder()
-                            .order(order)  // Liên kết với Order
+                            .order(order)
                             .product(product)
                             .productBatch(batch)
                             .quantity(availableInBatch)
                             .build();
                     orderDetails.add(orderDetail);
-                    batch.setSold(batch.getSold() + availableInBatch); // Cập nhật sold
+                    batch.setSold(batch.getSold() + availableInBatch);
                     batchRepository.save(batch);
                     remainingQuantity -= availableInBatch;
                 }
@@ -186,6 +186,7 @@ public class OrderService {
             OrderStatus confirmStatus = orderStatusRepository.findByName("Chờ xác nhận")
                     .orElseThrow(() -> new RuntimeException("Order status 'Chờ xác nhận' not found"));
 
+            // Lấy tất cả các đơn hàng "Đặt trước"
             List<Order> preOrders = orderRepository.findByOrderStatus(preOrderStatus)
                     .stream()
                     .sorted(Comparator.comparing(Order::getRequiredDate))
@@ -198,9 +199,19 @@ public class OrderService {
                 for (PreOrderDetail preOrderDetail : preOrder.getPreOrderDetail()) {
                     Product product = preOrderDetail.getProduct();
                     int remainingQuantity = preOrderDetail.getQuantity();
+                    List<Batch> productBatches = batchRepository.findByProductIdOrderByExpiryDateAsc(product.getId());
 
-                    List<Batch> productBatches = productBatchRepository.findByProductIdOrderByExpiryDateAsc(product.getId());
+                    // Tổng số lượng sản phẩm có sẵn từ tất cả các batch
+                    int totalAvailableQuantity = productBatches.stream()
+                            .mapToInt(batch -> batch.getQuantity() - batch.getSold())
+                            .sum();
 
+                    if (totalAvailableQuantity < remainingQuantity) {
+                        canFulfillOrder = false;
+                        break;
+                    }
+
+                    // Duyệt qua các batch và phân bổ số lượng cho đơn hàng
                     for (Batch batch : productBatches) {
                         int availableInBatch = batch.getQuantity() - batch.getSold();
 
@@ -231,25 +242,23 @@ public class OrderService {
                             remainingQuantity -= availableInBatch;
                         }
                     }
-
-                    if (remainingQuantity > 0) {
-                        canFulfillOrder = false;
-                        break;
-                    }
-
-                    int totalStockQuantity = productBatches.stream()
-                            .mapToInt(b -> b.getQuantity() - b.getSold())
-                            .sum();
-                    product.setStockQuantity(totalStockQuantity);
-                    productRepository.save(product);
                 }
 
                 if (canFulfillOrder) {
                     preOrder.setOrderStatus(confirmStatus);
                     preOrder.setPreOrder(false);
-                    preOrder.getOrderDetails().clear(); // Clear existing details to avoid Hibernate issues
-                    preOrder.getOrderDetails().addAll(orderDetails); // Add new details
+                    preOrder.getOrderDetails().clear();
+                    preOrder.getOrderDetails().addAll(orderDetails);
                     orderRepository.save(preOrder);
+                    for (OrderDetail detail : preOrder.getOrderDetails()) {
+                        Product product = detail.getProduct();
+                        int totalStockQuantity = batchRepository.findByProductIdOrderByExpiryDateAsc(product.getId())
+                                .stream()
+                                .mapToInt(b -> b.getQuantity() - b.getSold())
+                                .sum();
+                        product.setStockQuantity(totalStockQuantity);
+                        productRepository.save(product);
+                    }
                 }
             }
         } catch (Exception e) {
