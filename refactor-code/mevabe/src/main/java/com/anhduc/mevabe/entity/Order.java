@@ -64,7 +64,7 @@ public class Order extends AuditAble {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PreOrderDetail> preOrderDetail = new ArrayList<>();
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User member;
 

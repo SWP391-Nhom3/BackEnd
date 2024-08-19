@@ -15,7 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CreateOrderRequest {
 
-
     private UUID userId = null;
     private String fullName;
     private String address;

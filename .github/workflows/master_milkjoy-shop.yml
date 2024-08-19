@@ -1,0 +1,61 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy JAR app to Azure Web App - milkjoy-shop
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java version
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'microsoft'
+
+      - name: Build with Maven
+        run: |
+          cd refactor-code\mevabe
+          mvn clean install
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-app
+          path: 'refactor-code/mevabe/target/*.jar'
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: java-app
+      
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'milkjoy-shop'
+          slot-name: 'production'
+          package: 'refactor-code/mevabe/target/*.jar'
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_8ba599bde33e42a4bb3443f1993b3c49 }}
