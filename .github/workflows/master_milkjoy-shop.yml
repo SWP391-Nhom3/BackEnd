@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: 'mevabe/target/*.jar'
+          path: 'refactor-code/mevabe/target/*.jar'
 
   deploy:
     runs-on: windows-latest
@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'milkjoy-shop'
           slot-name: 'production'
-          package: 'mevabe/target/*.jar'
+          package: 'refactor-code/mevabe/target/*.jar'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_8ba599bde33e42a4bb3443f1993b3c49 }}
