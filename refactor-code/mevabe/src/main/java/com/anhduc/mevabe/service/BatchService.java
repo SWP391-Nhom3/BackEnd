@@ -30,6 +30,7 @@ public class BatchService {
     BatchRepository batchRepository;
     ModelMapper modelMapper;
     ProductRepository productRepository;
+    OrderService orderService;
 
     public void create(CreateBatchRequest request)  {
         Product product = productRepository.findById(request.getProduct().getId())
@@ -40,6 +41,7 @@ public class BatchService {
         product.setStockQuantity((int) (product.getStockQuantity() + request.getQuantity()));
 
         batchRepository.save(batch);
+        orderService.processPreOrderToOrder();
     }
 
     public List<BatchResponse> findAll() {

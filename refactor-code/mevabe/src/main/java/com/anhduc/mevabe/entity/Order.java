@@ -48,6 +48,8 @@ public class Order extends AuditAble {
 
     BigDecimal totalPrice;
 
+    boolean isPreOrder = false;
+
     @OneToOne
     @JoinColumn(name = "voucher_id", referencedColumnName = "id", nullable = true)
     private Voucher voucher;
@@ -59,11 +61,11 @@ public class Order extends AuditAble {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PreOrderDetail> preOrderDetail = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User member;
 
-    @OneToOne
-    @JoinColumn(name = "shipper_id", referencedColumnName = "id")
-    private User shipper;
 }
