@@ -76,7 +76,7 @@ public class OrderService {
         if (createOrderRequest.getUserId() != null) {
             User user = userRepository.findById(createOrderRequest.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            order.setMember(user);  // Gán user vào Order nếu userId tồn tại
+            order.setMember(user);
         }
 
         List<OrderDetail> orderDetails = new ArrayList<>();
