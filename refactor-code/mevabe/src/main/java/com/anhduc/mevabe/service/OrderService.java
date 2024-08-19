@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +37,6 @@ public class OrderService {
 
     @Autowired
     BatchRepository productBatchRepository;
-
-    @Autowired
-    BatchService productBatchService;
 
     @Autowired
     ProductRepository productRepository;
@@ -67,6 +65,7 @@ public class OrderService {
                 .email(createOrderRequest.getEmail())
                 .paymentMethod(createOrderRequest.getPaymentMethod())
                 .requiredDate(now)
+                .isPreOrder(false)
                 .shipFee(createOrderRequest.getShipFee())
                 .totalPrice(createOrderRequest.getTotalPrice())
                 .voucherCode(createOrderRequest.getVoucherCode())
@@ -134,6 +133,130 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
         return savedOrder;
     }
+
+    public Order createPreOrder(PreOrderRequest preOrderRequest) {
+        OrderStatus preOrderStatus = orderStatusRepository.findByName("Đặt trước")
+                .orElseThrow(() -> new RuntimeException("Order status 'Đặt trước' not found"));
+        LocalDateTime now = LocalDateTime.now();
+        Order order = Order.builder()
+                .fullName(preOrderRequest.getFullName())
+                .address(preOrderRequest.getAddress())
+                .phone(preOrderRequest.getPhone())
+                .email(preOrderRequest.getEmail())
+                .paymentMethod(preOrderRequest.getPaymentMethod())
+                .requiredDate(now)
+                .shipFee(preOrderRequest.getShipFee())
+                .totalPrice(preOrderRequest.getTotalPrice())
+                .voucherCode(preOrderRequest.getVoucherCode())
+                .orderStatus(preOrderStatus)
+                .isPreOrder(true)
+                .build();
+
+        if (preOrderRequest.getUserId() != null) {
+            User user = userRepository.findById(preOrderRequest.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            order.setMember(user);
+        }
+
+        List<PreOrderDetail> orderDetails = new ArrayList<>();
+
+        for (PreOrderRequest.PreOrderDetailRequest detailRequest : preOrderRequest.getOrderDetails()) {
+            Product product = productRepository.findById(detailRequest.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+
+            PreOrderDetail orderDetail = PreOrderDetail.builder()
+                    .order(order)
+                    .product(product)
+                    .quantity(detailRequest.getQuantity())
+                    .build();
+
+            orderDetails.add(orderDetail);
+        }
+
+        order.setPreOrderDetail(orderDetails);
+        Order savedOrder = orderRepository.save(order);
+        return savedOrder;
+    }
+
+    public void processPreOrderToOrder() {
+        try {
+            OrderStatus preOrderStatus = orderStatusRepository.findByName("Đặt trước")
+                    .orElseThrow(() -> new RuntimeException("Order status 'Đặt trước' not found"));
+
+            OrderStatus confirmStatus = orderStatusRepository.findByName("Chờ xác nhận")
+                    .orElseThrow(() -> new RuntimeException("Order status 'Chờ xác nhận' not found"));
+
+            List<Order> preOrders = orderRepository.findByOrderStatus(preOrderStatus)
+                    .stream()
+                    .sorted(Comparator.comparing(Order::getRequiredDate))
+                    .toList();
+
+            for (Order preOrder : preOrders) {
+                boolean canFulfillOrder = true;
+                List<OrderDetail> orderDetails = new ArrayList<>();
+
+                for (PreOrderDetail preOrderDetail : preOrder.getPreOrderDetail()) {
+                    Product product = preOrderDetail.getProduct();
+                    int remainingQuantity = preOrderDetail.getQuantity();
+
+                    List<Batch> productBatches = productBatchRepository.findByProductIdOrderByExpiryDateAsc(product.getId());
+
+                    for (Batch batch : productBatches) {
+                        int availableInBatch = batch.getQuantity() - batch.getSold();
+
+                        if (availableInBatch >= remainingQuantity) {
+                            OrderDetail orderDetail = OrderDetail.builder()
+                                    .order(preOrder)
+                                    .product(product)
+                                    .productBatch(batch)
+                                    .quantity(remainingQuantity)
+                                    .build();
+
+                            orderDetails.add(orderDetail);
+                            batch.setSold(batch.getSold() + remainingQuantity);
+                            batchRepository.save(batch);
+                            remainingQuantity = 0;
+                            break;
+                        } else if (availableInBatch > 0) {
+                            OrderDetail orderDetail = OrderDetail.builder()
+                                    .order(preOrder)
+                                    .product(product)
+                                    .productBatch(batch)
+                                    .quantity(availableInBatch)
+                                    .build();
+
+                            orderDetails.add(orderDetail);
+                            batch.setSold(batch.getSold() + availableInBatch);
+                            batchRepository.save(batch);
+                            remainingQuantity -= availableInBatch;
+                        }
+                    }
+
+                    if (remainingQuantity > 0) {
+                        canFulfillOrder = false;
+                        break;
+                    }
+
+                    int totalStockQuantity = productBatches.stream()
+                            .mapToInt(b -> b.getQuantity() - b.getSold())
+                            .sum();
+                    product.setStockQuantity(totalStockQuantity);
+                    productRepository.save(product);
+                }
+
+                if (canFulfillOrder) {
+                    preOrder.setOrderStatus(confirmStatus);
+                    preOrder.setPreOrder(false);
+                    preOrder.getOrderDetails().clear(); // Clear existing details to avoid Hibernate issues
+                    preOrder.getOrderDetails().addAll(orderDetails); // Add new details
+                    orderRepository.save(preOrder);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while processing pre-orders: {}", e.getMessage(), e);
+        }
+    }
+
 
     @Transactional
     public Order confirmOrder(UUID orderId) {

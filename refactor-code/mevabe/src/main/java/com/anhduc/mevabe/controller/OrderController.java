@@ -1,6 +1,7 @@
 package com.anhduc.mevabe.controller;
 
 import com.anhduc.mevabe.dto.request.CreateOrderRequest;
+import com.anhduc.mevabe.dto.request.PreOrderRequest;
 import com.anhduc.mevabe.entity.Order;
 import com.anhduc.mevabe.service.OrderService;
 import lombok.AccessLevel;
@@ -43,6 +44,16 @@ public class OrderController {
         Optional<Order> order = orderService.getOrderById(orderId);
         return order.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/pre-order")
+    public ResponseEntity<Order> createPreOrder(@RequestBody PreOrderRequest preOrderRequest) {
+        try {
+            Order preOrder = orderService.createPreOrder(preOrderRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(preOrder);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @PutMapping("/confirm/{orderId}")
