@@ -105,116 +105,115 @@ public class ApplicationInitConfig {
     };
 
     private void initializeRoles() {
-            // Check if roles already exist to avoid duplication
-            if (roleRepository.count() == 0 && permissionRepository.count() == 0) {
-                log.info("Initializing roles, permissions, and default users.");
+        if (roleRepository.count() == 0 && permissionRepository.count() == 0) {
+            log.info("Initializing roles, permissions, and default users.");
 
-                // Guest permissions
-                Permission viewProducts = new Permission();
-                viewProducts.setName("VIEW_PRODUCTS");
-                viewProducts.setDescription("Xem thông tin, xem đánh giá, tìm kiếm các sản phẩm về sữa và mua hàng.");
+            Permission viewProducts = new Permission();
+            viewProducts.setName("VIEW_PRODUCTS");
+            viewProducts.setDescription("Xem thông tin, xem đánh giá, tìm kiếm các sản phẩm về sữa và mua hàng.");
 
-                Permission viewHealthArticles = new Permission();
-                viewHealthArticles.setName("VIEW_HEALTH_ARTICLES");
-                viewHealthArticles.setDescription("Xem các bài viết về chăm sóc sức khỏe cho mẹ bầu và em bé.");
+            Permission viewHealthArticles = new Permission();
+            viewHealthArticles.setName("VIEW_HEALTH_ARTICLES");
+            viewHealthArticles.setDescription("Xem các bài viết về chăm sóc sức khỏe cho mẹ bầu và em bé.");
 
-                Permission purchaseFromArticles = new Permission();
-                purchaseFromArticles.setName("PURCHASE_FROM_ARTICLES");
-                purchaseFromArticles.setDescription("Mua hàng trực tiếp từ các sản phẩm được gợi ý từ các bài viết.");
+            Permission purchaseFromArticles = new Permission();
+            purchaseFromArticles.setName("PURCHASE_FROM_ARTICLES");
+            purchaseFromArticles.setDescription("Mua hàng trực tiếp từ các sản phẩm được gợi ý từ các bài viết.");
 
-                // Member permissions
-                Permission onlinePayment = new Permission();
-                onlinePayment.setName("ONLINE_PAYMENT");
-                onlinePayment.setDescription("Mua hàng bằng các hình thức chuyển khoản, thanh toán trực tuyến.");
+            // Member permissions
+            Permission onlinePayment = new Permission();
+            onlinePayment.setName("ONLINE_PAYMENT");
+            onlinePayment.setDescription("Mua hàng bằng các hình thức chuyển khoản, thanh toán trực tuyến.");
 
-                Permission useVoucher = new Permission();
-                useVoucher.setName("USE_VOUCHER");
-                useVoucher.setDescription("Sử dụng voucher, tích lũy điểm thành viên, đổi quà hoặc sản phẩm.");
+            Permission useVoucher = new Permission();
+            useVoucher.setName("USE_VOUCHER");
+            useVoucher.setDescription("Sử dụng voucher, tích lũy điểm thành viên, đổi quà hoặc sản phẩm.");
 
-                Permission reviewProducts = new Permission();
-                reviewProducts.setName("REVIEW_PRODUCTS");
-                reviewProducts.setDescription("Đánh giá, feedback sản phẩm.");
+            Permission reviewProducts = new Permission();
+            reviewProducts.setName("REVIEW_PRODUCTS");
+            reviewProducts.setDescription("Đánh giá, feedback sản phẩm.");
 
-                Permission chatConsultation = new Permission();
-                chatConsultation.setName("CHAT_CONSULTATION");
-                chatConsultation.setDescription("Đăng ký tư vấn chọn và mua sữa online.");
+            Permission chatConsultation = new Permission();
+            chatConsultation.setName("CHAT_CONSULTATION");
+            chatConsultation.setDescription("Đăng ký tư vấn chọn và mua sữa online.");
 
-                Permission preOrder = new Permission();
-                preOrder.setName("PRE_ORDER");
-                preOrder.setDescription("Đặt hàng trước khi chưa có sẵn sản phẩm.");
+            Permission preOrder = new Permission();
+            preOrder.setName("PRE_ORDER");
+            preOrder.setDescription("Đặt hàng trước khi chưa có sẵn sản phẩm.");
 
-                // Staff permissions
-                Permission confirmOrders = new Permission();
-                confirmOrders.setName("CONFIRM_ORDERS");
-                confirmOrders.setDescription("Xác nhận các đơn hàng.");
+            // Staff permissions
+            Permission confirmOrders = new Permission();
+            confirmOrders.setName("CONFIRM_ORDERS");
+            confirmOrders.setDescription("Xác nhận các đơn hàng.");
 
-                Permission manageInventory = new Permission();
-                manageInventory.setName("MANAGE_INVENTORY");
-                manageInventory.setDescription("Quản lý hàng hóa.");
+            Permission manageInventory = new Permission();
+            manageInventory.setName("MANAGE_INVENTORY");
+            manageInventory.setDescription("Quản lý hàng hóa.");
 
-                Permission manageUsers = new Permission();
-                manageUsers.setName("MANAGE_USERS");
-                manageUsers.setDescription("Quản lý người dùng.");
+            Permission manageUsers = new Permission();
+            manageUsers.setName("MANAGE_USERS");
+            manageUsers.setDescription("Quản lý người dùng.");
 
-                Permission createVouchers = new Permission();
-                createVouchers.setName("CREATE_VOUCHERS");
-                createVouchers.setDescription("Tạo các mã voucher.");
+            Permission createVouchers = new Permission();
+            createVouchers.setName("CREATE_VOUCHERS");
+            createVouchers.setDescription("Tạo các mã voucher.");
 
-                Permission processReports = new Permission();
-                processReports.setName("PROCESS_REPORTS");
-                processReports.setDescription("Xử lý report, tracking đơn hàng.");
+            Permission processReports = new Permission();
+            processReports.setName("PROCESS_REPORTS");
+            processReports.setDescription("Xử lý report, tracking đơn hàng.");
 
-                Permission manageArticles = new Permission();
-                manageArticles.setName("MANAGE_ARTICLES");
-                manageArticles.setDescription("Quản lý các bài viết.");
+            Permission manageArticles = new Permission();
+            manageArticles.setName("MANAGE_ARTICLES");
+            manageArticles.setDescription("Quản lý các bài viết.");
 
-                // Admin permissions
-                Permission manageAccounts = new Permission();
-                manageAccounts.setName("MANAGE_ACCOUNTS");
-                manageAccounts.setDescription("Quản lý account.");
+            // Admin permissions
+            Permission manageAccounts = new Permission();
+            manageAccounts.setName("MANAGE_ACCOUNTS");
+            manageAccounts.setDescription("Quản lý account.");
 
-                Permission viewStatistics = new Permission();
-                viewStatistics.setName("VIEW_STATISTICS");
-                viewStatistics.setDescription("Thống kê doanh thu, sản phẩm.");
+            Permission viewStatistics = new Permission();
+            viewStatistics.setName("VIEW_STATISTICS");
+            viewStatistics.setDescription("Thống kê doanh thu, sản phẩm.");
 
-                // Save all permissions to the database
-                permissionRepository.saveAll(List.of(
-                        viewProducts, viewHealthArticles, purchaseFromArticles,
-                        onlinePayment, useVoucher, reviewProducts, chatConsultation, preOrder,
-                        confirmOrders, manageInventory, manageUsers, createVouchers, processReports, manageArticles,
-                        manageAccounts, viewStatistics
-                ));
+            // Save all permissions to the database
+            permissionRepository.saveAll(List.of(
+                    viewProducts, viewHealthArticles, purchaseFromArticles,
+                    onlinePayment, useVoucher, reviewProducts, chatConsultation, preOrder,
+                    confirmOrders, manageInventory, manageUsers, createVouchers, processReports, manageArticles,
+                    manageAccounts, viewStatistics
+            ));
 
-                // Create roles and assign permissions
-                Role guestRole = new Role();
-                guestRole.setName("GUEST");
-                guestRole.setDescription("Guest role");
-                guestRole.setPermissions(Set.of(viewProducts, viewHealthArticles, purchaseFromArticles));
+            // Create roles and assign permissions
+            Role guestRole = new Role();
+            guestRole.setName("GUEST");
+            guestRole.setDescription("Guest role");
+            guestRole.setPermissions(Set.of(viewProducts, viewHealthArticles, purchaseFromArticles));
 
-                Role memberRole = new Role();
-                memberRole.setName("MEMBER");
-                memberRole.setDescription("Member role");
-                memberRole.setPermissions(Set.of(onlinePayment, useVoucher, reviewProducts, chatConsultation, preOrder));
+            Role memberRole = new Role();
+            memberRole.setName("MEMBER");
+            memberRole.setDescription("Member role");
+            memberRole.setPermissions(Set.of(onlinePayment, useVoucher, reviewProducts, chatConsultation, preOrder));
 
-                Role staffRole = new Role();
-                staffRole.setName("STAFF");
-                staffRole.setDescription("Staff role");
-                staffRole.setPermissions(Set.of(confirmOrders, manageInventory, manageUsers, createVouchers, processReports, manageArticles));
+            Role staffRole = new Role();
+            staffRole.setName("STAFF");
+            staffRole.setDescription("Staff role");
+            staffRole.setPermissions(Set.of(confirmOrders, manageInventory, manageUsers, createVouchers, processReports, manageArticles));
 
-                Role adminRole = new Role();
-                adminRole.setName("ADMIN");
-                adminRole.setDescription("Admin role");
-                adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
+            Role adminRole = new Role();
+            adminRole.setName("ADMIN");
+            adminRole.setDescription("Admin role");
+            adminRole.setPermissions(Set.of(manageAccounts, viewStatistics));
 
-                Role shipperRole = new Role();
-                adminRole.setName("SHIPPER");
-                adminRole.setDescription("Shiper role");
+            Role shipperRole = new Role();
+            shipperRole.setName("SHIPPER");
+            shipperRole.setDescription("Shipper role");
 
 
-                // Save roles to the database
-                roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole, shipperRole));
 
-                // Create users with corresponding roles
+            // Save roles to the database
+            roleRepository.saveAll(List.of(guestRole, memberRole, staffRole, adminRole, shipperRole));
+
+            // Create users with corresponding roles
 //                User guestUser = User.builder()
 //                        .email("guest@example.com")
 //                        .password(passwordEncoder.encode("guestpassword"))
@@ -223,65 +222,65 @@ public class ApplicationInitConfig {
 //                        .roles(Set.of(guestRole))
 //                        .build();
 
-                User memberUser = User.builder()
-                        .email("member@example.com")
-                        .password(passwordEncoder.encode("memberpassword"))
-                        .active(true)
-                        .firstName("Member")
-                        .lastName("User")
-                        .point(0)
-                        .roles(Set.of(memberRole))
-                        .build();
+            User memberUser = User.builder()
+                    .email("member@example.com")
+                    .password(passwordEncoder.encode("memberpassword"))
+                    .active(true)
+                    .firstName("Member")
+                    .lastName("User")
+                    .point(0)
+                    .roles(Set.of(memberRole))
+                    .build();
 
-                User staffUser = User.builder()
-                        .email("staff@example.com")
-                        .password(passwordEncoder.encode("staffpassword"))
-                        .active(true)
-                        .firstName("Staff")
-                        .lastName("User")
-                        .point(0)
-                        .roles(Set.of(staffRole))
-                        .build();
+            User staffUser = User.builder()
+                    .email("staff@example.com")
+                    .password(passwordEncoder.encode("staffpassword"))
+                    .active(true)
+                    .firstName("Staff")
+                    .lastName("User")
+                    .point(0)
+                    .roles(Set.of(staffRole))
+                    .build();
 
-                User adminUser = User.builder()
-                        .email("admin@example.com")
-                        .password(passwordEncoder.encode("adminpassword"))
-                        .active(true)
-                        .firstName("Admin")
-                        .point(0)
-                        .lastName("User")
-                        .roles(Set.of(adminRole))
-                        .build();
+            User adminUser = User.builder()
+                    .email("admin@example.com")
+                    .password(passwordEncoder.encode("adminpassword"))
+                    .active(true)
+                    .firstName("Admin")
+                    .point(0)
+                    .lastName("User")
+                    .roles(Set.of(adminRole))
+                    .build();
 
-                User Shipper1 = User.builder()
-                        .email("shipper@example.com")
-                        .password(passwordEncoder.encode("shipperpassword"))
-                        .active(true)
-                        .firstName("Shipper")
-                        .point(0)
-                        .lastName("User")
-                        .roles(Set.of(adminRole))
-                        .build();
+            User Shipper1 = User.builder()
+                    .email("shipper@example.com")
+                    .password(passwordEncoder.encode("shipperpassword"))
+                    .active(true)
+                    .firstName("Shipper")
+                    .point(0)
+                    .lastName("User")
+                    .roles(Set.of(shipperRole))
+                    .build();
 
-                User Shipper2 = User.builder()
-                        .email("shipper@gmail.com")
-                        .password(passwordEncoder.encode("shipperpassword"))
-                        .active(true)
-                        .firstName("Shipper")
-                        .point(0)
-                        .lastName("User")
-                        .roles(Set.of(adminRole))
-                        .build();
+            User Shipper2 = User.builder()
+                    .email("shipper@gmail.com")
+                    .password(passwordEncoder.encode("shipperpassword"))
+                    .active(true)
+                    .firstName("Shipper")
+                    .point(0)
+                    .lastName("User")
+                    .roles(Set.of(shipperRole))
+                    .build();
 
-                // Save users to the database
-                userRepository.saveAll(List.of(memberUser, staffUser, adminUser, Shipper1, Shipper2));
+            // Save users to the database
+            userRepository.saveAll(List.of(memberUser, staffUser, adminUser, Shipper1, Shipper2));
 
-                log.warn("Member account: member@example.com. password: memberpassword");
-                log.warn("Staff account: staff@example.com. password: staffpassword");
-                log.warn("Admin account: admin@example.com. password: adminpassword");
-                log.info("Default users have been created successfully.");
-            } else {
-                log.info("Roles, permissions, and default users already exist. Skipping initialization.");
-            }
-        };
-    }
+            log.warn("Member account: member@example.com. password: memberpassword");
+            log.warn("Staff account: staff@example.com. password: staffpassword");
+            log.warn("Admin account: admin@example.com. password: adminpassword");
+            log.info("Default users have been created successfully.");
+        } else {
+            log.info("Roles, permissions, and default users already exist. Skipping initialization.");
+        }
+    };
+}

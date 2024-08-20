@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.controller;
 
+import com.anhduc.mevabe.dto.request.ConfirmOrderRequest;
 import com.anhduc.mevabe.dto.request.CreateOrderRequest;
 import com.anhduc.mevabe.dto.request.PreOrderRequest;
 import com.anhduc.mevabe.entity.Order;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,9 +59,10 @@ public class OrderController {
     }
 
     @PutMapping("/confirm/{orderId}")
-    public ResponseEntity<Order> confirmOrder(@PathVariable UUID orderId) {
+    public ResponseEntity<Order> confirmOrder(@PathVariable UUID orderId, @RequestBody ConfirmOrderRequest request) {
         try {
-            Order confirmedOrder = orderService.confirmOrder(orderId);
+            UUID shipperId = request.getShipperId();
+            Order confirmedOrder = orderService.confirmOrder(orderId, shipperId);
             return ResponseEntity.ok(confirmedOrder);
         } catch (RuntimeException e) {
             System.err.println("Error in confirmOrder: " + e.getMessage());

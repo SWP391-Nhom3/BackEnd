@@ -266,9 +266,8 @@ public class OrderService {
         }
     }
 
-
     @Transactional
-    public Order confirmOrder(UUID orderId) {
+    public Order confirmOrder(UUID orderId, UUID shipperId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         LocalDateTime now = LocalDateTime.now();
@@ -278,9 +277,14 @@ public class OrderService {
         }
 
         OrderStatus confirmedStatus = orderStatusRepository.findByName("Đang giao hàng")
-                .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
+                .orElseThrow(() -> new RuntimeException("Order status 'Đang giao hàng' not found"));
+
+        User shipper = userRepository.findById(shipperId)
+                .orElseThrow(() -> new RuntimeException("Shipper not found"));
+
         order.setOrderStatus(confirmedStatus);
         order.setAcceptedDate(now);
+        order.setShipper(shipper);
 
         return orderRepository.save(order);
     }
