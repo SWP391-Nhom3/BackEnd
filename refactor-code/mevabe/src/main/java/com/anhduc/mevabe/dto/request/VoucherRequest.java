@@ -16,7 +16,6 @@ public class VoucherRequest {
 
     VoucherType type;
     BigDecimal value;
-    BigDecimal minOrderValue;
     Integer maxUses;
     LocalDateTime expiryDate;
 }
