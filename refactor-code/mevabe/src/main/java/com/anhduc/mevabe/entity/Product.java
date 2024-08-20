@@ -43,5 +43,7 @@ public class Product extends AuditAble{
     Category category;
     @ManyToOne
     User user;
+    @OneToOne
+    Article article;
 
 }
