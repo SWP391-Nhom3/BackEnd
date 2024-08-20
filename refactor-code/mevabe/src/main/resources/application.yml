@@ -15,9 +15,10 @@ spring:
           starttls:
             enable: true
   datasource:
-    url: jdbc:mysql://localhost:3306/MilkJoy?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
-    username: root
-    password: 123456789
+    url: jdbc:mysql://swp391.mysql.database.azure.com:3306/milkjoy?createDatabaseIfNotExist=true
+    username: milkjoyadmin
+    password: Swp@123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
