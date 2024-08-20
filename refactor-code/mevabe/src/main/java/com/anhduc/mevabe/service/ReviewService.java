@@ -4,7 +4,9 @@ import com.anhduc.mevabe.dto.request.CreateBrandRequest;
 import com.anhduc.mevabe.dto.response.BrandResponse;
 import com.anhduc.mevabe.entity.Brand;
 import com.anhduc.mevabe.entity.Review;
+import com.anhduc.mevabe.entity.ReviewReply;
 import com.anhduc.mevabe.repository.BrandRepository;
+import com.anhduc.mevabe.repository.ReviewReplyRepository;
 import com.anhduc.mevabe.repository.ReviewRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +25,17 @@ import java.util.UUID;
 public class ReviewService {
 
     ReviewRepository reviewRepository;
+    ReviewReplyRepository reviewReplyRepository;
 
     public void create(Review review) {
         reviewRepository.save(review);
+    }
+
+    public List<Review> getReviews(UUID productId, UUID userId) {
+        if (productId == null || userId == null) {
+            throw new IllegalArgumentException("Product ID and User ID must not be null");
+        }
+        return reviewRepository.findByProductIdAndUserId(productId, userId);
     }
 
     public List<Review> findAll() {

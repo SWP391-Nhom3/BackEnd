@@ -4,6 +4,7 @@ import com.anhduc.mevabe.dto.request.CreateBatchRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import com.anhduc.mevabe.dto.response.BatchResponse;
 import com.anhduc.mevabe.entity.Review;
+import com.anhduc.mevabe.entity.ReviewReply;
 import com.anhduc.mevabe.service.BatchService;
 import com.anhduc.mevabe.service.ReviewService;
 import jakarta.validation.Valid;
@@ -41,6 +42,14 @@ public class ReviewController {
                 .data(reviewService.findAll()).build();
     }
 
+    @GetMapping("/{productId}/{userId}")
+    public ApiResponse<List<Review>> getReview(@PathVariable UUID productId, @PathVariable UUID userId) {
+        List<Review> reviews = reviewService.getReviews(productId, userId);
+        return ApiResponse.<List<Review>>builder()
+                .data(reviews)
+                .build();
+    }
+
     @GetMapping("/{id}")
     ApiResponse<Review> getById(@PathVariable UUID id) {
         return ApiResponse.<Review>builder()
@@ -54,5 +63,4 @@ public class ReviewController {
                 .message("Review deleted successfully")
                 .build();
     }
-
 }
