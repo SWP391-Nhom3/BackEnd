@@ -41,6 +41,13 @@ public class UserController {
                 .build();
     }
 
+    @PostMapping("/create-shipper")
+    public ApiResponse<UserResponse> createShipper(@RequestBody @Valid UserCreationRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .data(userService.createShipper(request))
+                .build();
+    }
+
     @PostMapping("/create-password")
     ApiResponse<Void> createPassword(@RequestBody @Valid CreatePasswordRequest request) {
         userService.createPassword(request);
@@ -54,6 +61,11 @@ public class UserController {
     ApiResponse<List<UserResponse>> getAllUsers() {
         return ApiResponse.<List<UserResponse>>builder()
                 .data(userService.getAll()).build();
+    }
+
+    @GetMapping("/shippers")
+    ApiResponse<List<UserResponse>> getAllShippers() {
+        return  ApiResponse.<List<UserResponse>>builder().data(userService.getShipper()).build();
     }
 
     @GetMapping("/{userId}")

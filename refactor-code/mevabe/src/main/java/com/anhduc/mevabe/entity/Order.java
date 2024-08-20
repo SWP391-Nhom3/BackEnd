@@ -68,4 +68,8 @@ public class Order extends AuditAble {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User member;
 
+    @ManyToOne
+    @JoinColumn(name = "shipper_id", referencedColumnName = "id")
+    private User shipper;
+
 }

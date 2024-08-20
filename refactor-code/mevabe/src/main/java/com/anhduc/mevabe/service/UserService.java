@@ -42,6 +42,11 @@ public class UserService {
         return createUser(request, "STAFF");
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createShipper(UserCreationRequest request) {
+        return createUser(request, "SHIPPER");
+    }
+
     private UserResponse createUser(UserCreationRequest request, String roleName) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -60,6 +65,8 @@ public class UserService {
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }
+
+
 
     public UserResponse updateMyInfo(UserUpdateRequest request) {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -104,6 +111,12 @@ public class UserService {
                 .toList();
     }
 
+    public List<UserResponse> getShipper(){
+        Role shipper = roleRepository.findByName("SHIPPER").get();
+        List<User> shippers = userRepository.findByRoles(shipper);
+        return shippers.stream().map(this::convertToResponse).toList();
+    }
+
     private UserResponse convertToResponse(User user) {
         return modelMapper.map(user, UserResponse.class);
     }
@@ -119,7 +132,7 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String email = context.getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() ->
-               new AppException(ErrorCode.USER_NOT_EXISTED));
+                new AppException(ErrorCode.USER_NOT_EXISTED));
 
         var userResponse = modelMapper.map(user, UserResponse.class);
         userResponse.setNoPassword(!StringUtils.hasText(user.getPassword()));
