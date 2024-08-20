@@ -333,6 +333,7 @@ public class OrderService {
         }
 
         order.setOrderStatus(confirmedStatus);
+        order.setShippedDate(now);
 
         return orderRepository.save(order);
     }
