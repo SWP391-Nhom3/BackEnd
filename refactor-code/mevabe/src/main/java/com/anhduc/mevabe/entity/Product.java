@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -41,8 +42,10 @@ public class Product extends AuditAble{
     Brand brand;
     @ManyToOne
     Category category;
+    @JsonIgnore
     @ManyToOne
     User user;
+    @JsonIgnore
     @OneToOne
     Article article;
 
