@@ -54,4 +54,9 @@ public class ReportController {
         return ApiResponse.<Report>builder().data(report).build();
     }
 
+    @GetMapping("/user/{customerid}")
+    ApiResponse<List<Report>> getReportByUser (@PathVariable UUID customerid){
+        return ApiResponse.<List<Report>>builder().data(reportService.getReportByUser(customerid)).build();
+    }
+
 }

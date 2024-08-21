@@ -76,4 +76,11 @@ public class ReportService {
         }
         return reportRepository.findByOrderIdAndCustomerId(orderid, memberid);
     }
+
+    public List<Report> getReportByUser(UUID userId){
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID must not be null");
+        }
+        return reportRepository.findByCustomerId(userId);
+    }
 }

@@ -54,16 +54,16 @@ public class ReviewReplyController {
                 .build();
     }
 
-    @GetMapping("/product/{productId}")
-    public ApiResponse<List<ReviewReply>> getRepliesByProduct(@PathVariable UUID productId) {
-        List<ReviewReply> replies = reviewService.getRepliesByProduct(productId);
-        return ApiResponse.<List<ReviewReply>>builder().data(replies).build();
-    }
-
-    @GetMapping("/user/{userId}")
-    public ApiResponse<List<ReviewReply>> getRepliesByUser(@PathVariable UUID userId) {
-        List<ReviewReply> replies = reviewService.getRepliesByUser(userId);
-        return ApiResponse.<List<ReviewReply>>builder().data(replies).build();
-    }
+//    @GetMapping("/product/{productId}")
+//    public ApiResponse<List<ReviewReply>> getRepliesByProduct(@PathVariable UUID productId) {
+//        List<ReviewReply> replies = reviewService.getRepliesByProduct(productId);
+//        return ApiResponse.<List<ReviewReply>>builder().data(replies).build();
+//    }
+//
+//    @GetMapping("/user/{userId}")
+//    public ApiResponse<List<ReviewReply>> getRepliesByUser(@PathVariable UUID userId) {
+//        List<ReviewReply> replies = reviewService.getRepliesByUser(userId);
+//        return ApiResponse.<List<ReviewReply>>builder().data(replies).build();
+//    }
 
 }

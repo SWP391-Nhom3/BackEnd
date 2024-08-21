@@ -33,6 +33,11 @@ public class Review extends AuditAble{
     @ManyToOne
     Product product;
     int rating;
+
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private ReviewReply reply;
+
     String comment;
     @JsonProperty("createdAt")
     public LocalDateTime getCreatedAt() {
