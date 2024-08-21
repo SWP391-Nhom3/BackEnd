@@ -25,7 +25,8 @@ public class Article extends AuditAble{
     String title;
     @Lob
     String content;
-    @OneToOne(mappedBy = "article")
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     Product product;
     String imgUrl;
 
