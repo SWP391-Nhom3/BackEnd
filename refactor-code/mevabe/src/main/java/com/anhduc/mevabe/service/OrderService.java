@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Slf4j
@@ -57,14 +59,15 @@ public class OrderService {
     public Order createOrder(CreateOrderRequest createOrderRequest) {
         OrderStatus status = orderStatusRepository.findByName("Chờ xác nhận")
                 .orElseThrow(() -> new RuntimeException("Order status 'Chờ xác nhận' not found"));
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
         Order order = Order.builder()
                 .fullName(createOrderRequest.getFullName())
                 .address(createOrderRequest.getAddress())
                 .phone(createOrderRequest.getPhone())
                 .email(createOrderRequest.getEmail())
                 .paymentMethod(createOrderRequest.getPaymentMethod())
-                .requiredDate(now)
+                .requiredDate(requiredDate)
                 .isPreOrder(false)
                 .shipFee(createOrderRequest.getShipFee())
                 .totalPrice(createOrderRequest.getTotalPrice())
@@ -137,14 +140,15 @@ public class OrderService {
     public Order createPreOrder(PreOrderRequest preOrderRequest) {
         OrderStatus preOrderStatus = orderStatusRepository.findByName("Đặt trước")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đặt trước' not found"));
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
         Order order = Order.builder()
                 .fullName(preOrderRequest.getFullName())
                 .address(preOrderRequest.getAddress())
                 .phone(preOrderRequest.getPhone())
                 .email(preOrderRequest.getEmail())
                 .paymentMethod(preOrderRequest.getPaymentMethod())
-                .requiredDate(now)
+                .requiredDate(requiredDate)
                 .shipFee(preOrderRequest.getShipFee())
                 .totalPrice(preOrderRequest.getTotalPrice())
                 .voucherCode(preOrderRequest.getVoucherCode())
@@ -270,7 +274,8 @@ public class OrderService {
     public Order confirmOrder(UUID orderId, UUID shipperId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
 
         if (!order.getOrderStatus().getName().equalsIgnoreCase("Chờ xác nhận")) {
             throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
@@ -283,7 +288,7 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Shipper not found"));
 
         order.setOrderStatus(confirmedStatus);
-        order.setAcceptedDate(now);
+        order.setAcceptedDate(requiredDate);
         order.setShipper(shipper);
 
         return orderRepository.save(order);
@@ -293,7 +298,8 @@ public class OrderService {
     public Order shippingOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
 
         if (!order.getOrderStatus().getName().equalsIgnoreCase("Đang giao hàng")) {
             throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
@@ -302,7 +308,7 @@ public class OrderService {
         OrderStatus confirmedStatus = orderStatusRepository.findByName("Hoàn thành")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
         order.setOrderStatus(confirmedStatus);
-        order.setShippedDate(now);
+        order.setShippedDate(requiredDate);
 
         return orderRepository.save(order);
     }
@@ -311,7 +317,8 @@ public class OrderService {
     public Order cancelShippingOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
 
         if (!order.getOrderStatus().getName().equalsIgnoreCase("Đang giao hàng")) {
             throw new RuntimeException("Order cannot be confirmed because it is not in 'Chờ xác nhận' status.");
@@ -333,7 +340,7 @@ public class OrderService {
         }
 
         order.setOrderStatus(confirmedStatus);
-        order.setShippedDate(now);
+        order.setShippedDate(requiredDate);
 
         return orderRepository.save(order);
     }
@@ -342,7 +349,8 @@ public class OrderService {
     public Order cancelOrder(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
 
         if (!order.getOrderStatus().getName().equalsIgnoreCase("Chờ xác nhận")) {
             throw new RuntimeException("Order cannot be canceled because it is not in 'Chờ xác nhận' status.");
@@ -365,7 +373,7 @@ public class OrderService {
         }
 
         order.setOrderStatus(canceledStatus);
-        order.setAcceptedDate(now);
+        order.setAcceptedDate(requiredDate);
         return orderRepository.save(order);
     }
 

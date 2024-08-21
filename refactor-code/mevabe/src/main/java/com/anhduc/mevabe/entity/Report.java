@@ -1,5 +1,7 @@
 package com.anhduc.mevabe.entity;
 
+import com.anhduc.mevabe.enums.ReportActionType;
+import com.anhduc.mevabe.enums.ReportStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,13 +20,32 @@ import java.util.UUID;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Report extends AuditAble {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
-    @ManyToOne
+
+    @OneToOne
     Order order;
+
     @ManyToOne
-    User user;
+    User customer;
+
+    @ManyToOne
+    User staff;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ReportStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ReportActionType actionType;
+
+    @Column(nullable = false, length = 500)
+    String reason;
+
+    String note;
 
     @JsonProperty("createdAt")
     public LocalDateTime getCreatedAt() {
