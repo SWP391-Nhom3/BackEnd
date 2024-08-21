@@ -31,7 +31,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public List<Review> getReviews(UUID productId, UUID userId) {
+    public Review getReviews(UUID productId, UUID userId) {
         if (productId == null || userId == null) {
             throw new IllegalArgumentException("Product ID and User ID must not be null");
         }

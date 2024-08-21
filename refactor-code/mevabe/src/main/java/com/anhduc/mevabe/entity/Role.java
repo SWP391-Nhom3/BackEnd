@@ -1,5 +1,6 @@
 package com.anhduc.mevabe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,8 +24,10 @@ public class Role{
     UUID id;
     @Column(unique = true, nullable = false)
     String name;
+    @JsonIgnore
     String description;
 
+    @JsonIgnore
     @ManyToMany
     Set<Permission> permissions;
 }

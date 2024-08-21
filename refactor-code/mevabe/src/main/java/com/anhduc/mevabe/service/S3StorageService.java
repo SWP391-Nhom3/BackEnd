@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @Service
-class S3StorageService {
+public class S3StorageService {
 
     @Value("${cloud.aws.s3.bucket-name}")
     private String bucketName;
