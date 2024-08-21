@@ -50,6 +50,22 @@ public class ReviewController {
                 .build();
     }
 
+    @GetMapping("/user/{userId}")
+    public ApiResponse<List<Review>> getReviewByUser(@PathVariable UUID userId) {
+        List<Review> reviews = reviewService.getReviewsByUser(userId);
+        return ApiResponse.<List<Review>>builder()
+                .data(reviews)
+                .build();
+    }
+
+    @GetMapping("/product/{productId}")
+    public ApiResponse<List<Review>> getReviewByProduct(@PathVariable UUID productId) {
+        List<Review> reviews = reviewService.getReviewsByProduct(productId);
+        return ApiResponse.<List<Review>>builder()
+                .data(reviews)
+                .build();
+    }
+
     @GetMapping("/{id}")
     ApiResponse<Review> getById(@PathVariable UUID id) {
         return ApiResponse.<Review>builder()

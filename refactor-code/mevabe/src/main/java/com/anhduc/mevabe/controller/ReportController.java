@@ -25,14 +25,14 @@ public class ReportController {
     ReportService reportService;
 
     @PostMapping
-    ApiResponse<Report> createReport (CreateReportRequest request){
+    ApiResponse<Report> createReport (@RequestBody CreateReportRequest request){
         reportService.create(request);
         return ApiResponse.<Report>builder()
                 .message("create report successfully").build();
     }
 
     @PutMapping("/{reportid}")
-    ApiResponse<Report> updateReport (@PathVariable UUID reportid, ProcessReportRequest request){
+    ApiResponse<Report> updateReport (@PathVariable UUID reportid,@RequestBody ProcessReportRequest request){
         reportService.processReport(reportid, request);
         return ApiResponse.<Report>builder().data(reportService.processReport(reportid,request))
                 .message("update report successfully").build();
