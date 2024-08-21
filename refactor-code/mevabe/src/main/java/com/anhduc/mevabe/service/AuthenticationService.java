@@ -100,6 +100,7 @@ public class AuthenticationService {
         User user = User.builder()
                 .email(request.getEmail())
                 .password(encodedPassword)
+                .active(true)
                 .point(0)
                 .roles(roles)
                 .build();
