@@ -25,7 +25,9 @@ public class ReviewReply extends AuditAble{
     UUID id;
     @ManyToOne
     User user;
-    @ManyToOne
+    @OneToOne
+    @JoinColumn(name = "review_id", nullable = false)
+    @JsonBackReference
     Review review;
     String replyText;
     @JsonProperty("createdAt")
