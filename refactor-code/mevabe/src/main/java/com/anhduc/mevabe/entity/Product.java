@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +47,7 @@ public class Product extends AuditAble{
     @ManyToOne
     User user;
     @JsonIgnore
-    @OneToOne
-    Article article;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    List<Article> articles = new ArrayList<>();
 
 }
