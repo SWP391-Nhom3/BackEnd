@@ -29,6 +29,7 @@ public class ReportService {
     UserRepository userRepository;
 
     public Report create (CreateReportRequest request){
+        log.info("Received report request from frontend: " + request);
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 

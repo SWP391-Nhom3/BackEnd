@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,20 @@ public class ReviewService {
         return reviewRepository.findByProductIdAndUserId(productId, userId);
     }
 
+    public List<Review> getReviewsByUser(UUID userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("Product ID and User ID must not be null");
+        }
+        return reviewRepository.findByUserId(userId);
+    }
+
+    public List<Review> getReviewsByProduct(UUID productId) {
+        if (productId == null) {
+            throw new IllegalArgumentException("Product ID and User ID must not be null");
+        }
+        return reviewRepository.findByProductId(productId);
+    }
+
     public List<Review> findAll() {
         return reviewRepository.findAll();
     }
@@ -49,5 +64,7 @@ public class ReviewService {
     public void delete(UUID id) {
         reviewRepository.deleteById(id);
     }
+
+
 
 }
