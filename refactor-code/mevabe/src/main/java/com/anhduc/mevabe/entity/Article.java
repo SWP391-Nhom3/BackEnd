@@ -25,5 +25,6 @@ public class Article extends AuditAble{
     String content;
     @OneToOne(mappedBy = "article")
     Product product;
+    String imgUrl;
 
 }

@@ -43,9 +43,9 @@ public class ReviewController {
     }
 
     @GetMapping("/{productId}/{userId}")
-    public ApiResponse<List<Review>> getReview(@PathVariable UUID productId, @PathVariable UUID userId) {
-        List<Review> reviews = reviewService.getReviews(productId, userId);
-        return ApiResponse.<List<Review>>builder()
+    public ApiResponse<Review> getReview(@PathVariable UUID productId, @PathVariable UUID userId) {
+        Review reviews = reviewService.getReviews(productId, userId);
+        return ApiResponse.<Review>builder()
                 .data(reviews)
                 .build();
     }
