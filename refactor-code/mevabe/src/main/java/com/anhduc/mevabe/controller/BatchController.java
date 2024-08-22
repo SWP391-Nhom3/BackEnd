@@ -25,7 +25,7 @@ public class BatchController {
     BatchService batchService;
 
     @PostMapping
-    ApiResponse<Void> add(@RequestBody @Valid CreateBatchRequest request) throws IOException {
+    ApiResponse<Void> add(@RequestBody @Valid CreateBatchRequest request) {
         batchService.create(request);
         return ApiResponse.<Void>builder()
                 .message("Batch created successfully")
