@@ -1,5 +1,7 @@
 package com.anhduc.mevabe.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -71,5 +73,16 @@ public class Order extends AuditAble {
     @ManyToOne
     @JoinColumn(name = "shipper_id", referencedColumnName = "id")
     private User shipper;
+
+    @JsonProperty("createdAt")
+    public LocalDateTime getCreatedAt() {
+        return super.createdAt;
+    }
+
+    @JsonProperty("updatedAt")
+    public LocalDateTime getUpdatedAt() {
+        return super.updatedAt;
+    }
+
 
 }

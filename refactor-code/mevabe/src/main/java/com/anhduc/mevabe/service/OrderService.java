@@ -41,6 +41,9 @@ public class OrderService {
     BatchRepository productBatchRepository;
 
     @Autowired
+    VoucherRepository voucherRepository;
+
+    @Autowired
     ProductRepository productRepository;
 
     @Autowired
@@ -61,6 +64,16 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Order status 'Chờ xác nhận' not found"));
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         LocalDateTime requiredDate = now.toLocalDateTime();
+        Voucher voucher = null;
+        if (createOrderRequest.getVoucherCode() != null && !createOrderRequest.getVoucherCode().isEmpty()) {
+            voucher = voucherRepository.findVoucherByCode(createOrderRequest.getVoucherCode());
+            if (voucher.getExpiryDate().isBefore(now.toLocalDateTime())) {
+                throw new RuntimeException("Voucher has expired");
+            }
+            voucher.setMaxUses(voucher.getMaxUses() - 1);
+            voucherRepository.save(voucher);
+        }
+
         Order order = Order.builder()
                 .fullName(createOrderRequest.getFullName())
                 .address(createOrderRequest.getAddress())
@@ -69,6 +82,7 @@ public class OrderService {
                 .paymentMethod(createOrderRequest.getPaymentMethod())
                 .requiredDate(requiredDate)
                 .isPreOrder(false)
+                .voucher(voucher)
                 .shipFee(createOrderRequest.getShipFee())
                 .totalPrice(createOrderRequest.getTotalPrice())
                 .voucherCode(createOrderRequest.getVoucherCode())
@@ -140,15 +154,13 @@ public class OrderService {
     public Order createPreOrder(PreOrderRequest preOrderRequest) {
         OrderStatus preOrderStatus = orderStatusRepository.findByName("Đặt trước")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đặt trước' not found"));
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-        LocalDateTime requiredDate = now.toLocalDateTime();
+
         Order order = Order.builder()
                 .fullName(preOrderRequest.getFullName())
                 .address(preOrderRequest.getAddress())
                 .phone(preOrderRequest.getPhone())
                 .email(preOrderRequest.getEmail())
                 .paymentMethod(preOrderRequest.getPaymentMethod())
-                .requiredDate(requiredDate)
                 .shipFee(preOrderRequest.getShipFee())
                 .totalPrice(preOrderRequest.getTotalPrice())
                 .voucherCode(preOrderRequest.getVoucherCode())
@@ -205,7 +217,6 @@ public class OrderService {
                     int remainingQuantity = preOrderDetail.getQuantity();
                     List<Batch> productBatches = batchRepository.findByProductIdOrderByExpiryDateAsc(product.getId());
 
-                    // Tổng số lượng sản phẩm có sẵn từ tất cả các batch
                     int totalAvailableQuantity = productBatches.stream()
                             .mapToInt(batch -> batch.getQuantity() - batch.getSold())
                             .sum();
@@ -215,7 +226,6 @@ public class OrderService {
                         break;
                     }
 
-                    // Duyệt qua các batch và phân bổ số lượng cho đơn hàng
                     for (Batch batch : productBatches) {
                         int availableInBatch = batch.getQuantity() - batch.getSold();
 
@@ -249,8 +259,12 @@ public class OrderService {
                 }
 
                 if (canFulfillOrder) {
+                    ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+                    LocalDateTime requiredDate = now.toLocalDateTime();
+
                     preOrder.setOrderStatus(confirmStatus);
                     preOrder.setPreOrder(false);
+                    preOrder.setRequiredDate(requiredDate);
                     preOrder.getOrderDetails().clear();
                     preOrder.getOrderDetails().addAll(orderDetails);
                     orderRepository.save(preOrder);

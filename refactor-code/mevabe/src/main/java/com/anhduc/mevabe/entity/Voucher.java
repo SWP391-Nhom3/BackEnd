@@ -38,6 +38,8 @@ public class Voucher extends AuditAble{
     VoucherStatus status;
     @ManyToMany
     Set<Product> products;
+
+    @JsonIgnore
     @OneToOne(mappedBy = "voucher")
     Order order;
 
