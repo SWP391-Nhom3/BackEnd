@@ -24,6 +24,7 @@ public class Article extends AuditAble{
     UUID id;
     String title;
     @Lob
+    @Column(columnDefinition = "TEXT")
     String content;
     @ManyToOne
     @JoinColumn(name = "product_id")
