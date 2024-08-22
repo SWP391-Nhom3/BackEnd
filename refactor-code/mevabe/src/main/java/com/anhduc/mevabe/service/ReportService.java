@@ -83,4 +83,12 @@ public class ReportService {
         }
         return reportRepository.findByCustomerId(userId);
     }
+
+    public List<Report> getReportByStatus (ReportStatus status){
+        return reportRepository.findByStatus(status);
+    }
+
+    public List<Report> getReportByActionType (ReportActionType type){
+        return reportRepository.findByActionType(type);
+    }
 }

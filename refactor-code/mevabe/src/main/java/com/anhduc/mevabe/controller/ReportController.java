@@ -4,6 +4,8 @@ import com.anhduc.mevabe.dto.request.CreateReportRequest;
 import com.anhduc.mevabe.dto.request.ProcessReportRequest;
 import com.anhduc.mevabe.dto.response.ApiResponse;
 import com.anhduc.mevabe.entity.Report;
+import com.anhduc.mevabe.enums.ReportActionType;
+import com.anhduc.mevabe.enums.ReportStatus;
 import com.anhduc.mevabe.service.ReportService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,18 @@ public class ReportController {
     @GetMapping("/user/{customerid}")
     ApiResponse<List<Report>> getReportByUser (@PathVariable UUID customerid){
         return ApiResponse.<List<Report>>builder().data(reportService.getReportByUser(customerid)).build();
+    }
+
+    @GetMapping("/status/{status}")
+    ApiResponse<List<Report>> getReportsByStatus(@PathVariable ReportStatus status) {
+        List<Report> reports = reportService.getReportByStatus(status);
+        return ApiResponse.<List<Report>>builder().data(reports).build();
+    }
+
+    @GetMapping("/action/{action}")
+    ApiResponse<List<Report>> getReportsByActionType(@PathVariable ReportActionType action) {
+        List<Report> reports = reportService.getReportByActionType(action);
+        return ApiResponse.<List<Report>>builder().data(reports).build();
     }
 
 }
