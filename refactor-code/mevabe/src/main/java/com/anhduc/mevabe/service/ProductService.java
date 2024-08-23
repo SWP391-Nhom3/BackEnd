@@ -3,10 +3,12 @@ package com.anhduc.mevabe.service;
 import com.anhduc.mevabe.dto.request.CreateProductRequest;
 import com.anhduc.mevabe.dto.response.ProductResponse;
 import com.anhduc.mevabe.entity.Product;
+import com.anhduc.mevabe.entity.Review;
 import com.anhduc.mevabe.entity.User;
 import com.anhduc.mevabe.exception.AppException;
 import com.anhduc.mevabe.exception.ErrorCode;
 import com.anhduc.mevabe.repository.ProductRepository;
+import com.anhduc.mevabe.repository.ReviewRepository;
 import com.anhduc.mevabe.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class ProductService {
     ModelMapper modelMapper;
     S3StorageService s3StorageService;
     UserRepository userRepository;
+    ReviewRepository reviewRepository;
 
     public void create(CreateProductRequest request) throws IOException {
         List<String> images = new ArrayList<>();
@@ -109,6 +112,23 @@ public class ProductService {
         modelMapper.map(request, product);
         return convert(productRepository.save(product));
 
+    }
+
+    public void updateProductRating(UUID productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        List<Review> reviews = reviewRepository.findByProductId(productId);
+
+        if (!reviews.isEmpty()) {
+            float averageRating = (float) reviews.stream()
+                    .mapToInt(Review::getRating)
+                    .average()
+                    .orElse(0.0);
+
+            product.setRating(averageRating);
+            productRepository.save(product);
+        }
     }
 
     public void delete(UUID id) {

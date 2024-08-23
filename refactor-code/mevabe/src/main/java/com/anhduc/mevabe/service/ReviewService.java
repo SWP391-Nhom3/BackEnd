@@ -27,9 +27,11 @@ public class ReviewService {
 
     ReviewRepository reviewRepository;
     ReviewReplyRepository reviewReplyRepository;
+    ProductService productService;
 
     public void create(Review review) {
         reviewRepository.save(review);
+        productService.updateProductRating(review.getProduct().getId());
     }
 
     public Review getReviews(UUID productId, UUID userId) {

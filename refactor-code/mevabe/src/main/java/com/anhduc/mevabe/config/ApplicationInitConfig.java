@@ -97,7 +97,6 @@ public class ApplicationInitConfig {
                 user.setLastName("admin");
                 user.setRoles(roles);
                 user.setActive(true);
-                user.setPoint(0);
                 userRepository.save(user);
                 log.warn("Account admin has been created with email admin@gmail.com and password admin");
             }
@@ -228,7 +227,6 @@ public class ApplicationInitConfig {
                     .active(true)
                     .firstName("Member")
                     .lastName("User")
-                    .point(0)
                     .roles(Set.of(memberRole))
                     .build();
 
@@ -238,7 +236,6 @@ public class ApplicationInitConfig {
                     .active(true)
                     .firstName("Staff")
                     .lastName("User")
-                    .point(0)
                     .roles(Set.of(staffRole))
                     .build();
 
@@ -247,7 +244,6 @@ public class ApplicationInitConfig {
                     .password(passwordEncoder.encode("adminpassword"))
                     .active(true)
                     .firstName("Admin")
-                    .point(0)
                     .lastName("User")
                     .roles(Set.of(adminRole))
                     .build();
@@ -257,7 +253,6 @@ public class ApplicationInitConfig {
                     .password(passwordEncoder.encode("shipperpassword"))
                     .active(true)
                     .firstName("Shipper")
-                    .point(0)
                     .lastName("User")
                     .roles(Set.of(shipperRole))
                     .build();
@@ -267,7 +262,6 @@ public class ApplicationInitConfig {
                     .password(passwordEncoder.encode("shipperpassword"))
                     .active(true)
                     .firstName("Shipper")
-                    .point(0)
                     .lastName("User")
                     .roles(Set.of(shipperRole))
                     .build();

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class User extends AuditAble{
     String lastName;
     String phone;
     Date dob;
-    Integer point=0;
+    BigDecimal point;
     String address;
     boolean active;
     @ManyToMany

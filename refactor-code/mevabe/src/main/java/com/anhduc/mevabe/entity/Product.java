@@ -32,6 +32,8 @@ public class Product extends AuditAble{
     @Column(nullable = false)
     BigDecimal price;
     int stockQuantity = 0;
+    @Column(nullable = false)
+    float rating = 0.0f;
     @Builder.Default
     boolean isActive = false;
     @ElementCollection(fetch = FetchType.EAGER)

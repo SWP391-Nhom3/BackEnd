@@ -37,6 +37,8 @@ public class Order extends AuditAble {
 
     String email;
 
+    BigDecimal point;
+
     String paymentMethod;
 
     LocalDateTime requiredDate;

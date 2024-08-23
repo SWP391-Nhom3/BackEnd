@@ -30,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -101,7 +102,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(encodedPassword)
                 .active(true)
-                .point(0)
+                .point(BigDecimal.ZERO)
                 .roles(roles)
                 .build();
 

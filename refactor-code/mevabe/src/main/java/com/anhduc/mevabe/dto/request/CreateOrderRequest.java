@@ -20,6 +20,7 @@ public class CreateOrderRequest {
     private String address;
     private String phone;
     private String email;
+    private BigDecimal point;
     private String paymentMethod;
     private BigDecimal shipFee;
     private BigDecimal totalPrice;

@@ -92,6 +92,11 @@ public class OrderService {
         if (createOrderRequest.getUserId() != null) {
             User user = userRepository.findById(createOrderRequest.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (createOrderRequest.getPoint() != null && createOrderRequest.getPoint().compareTo(BigDecimal.ZERO) > 0) {
+                user.setPoint(user.getPoint().subtract(createOrderRequest.getPoint()));
+                order.setPoint(createOrderRequest.getPoint());
+            }
             order.setMember(user);
         }
 
@@ -154,7 +159,17 @@ public class OrderService {
     public Order createPreOrder(PreOrderRequest preOrderRequest) {
         OrderStatus preOrderStatus = orderStatusRepository.findByName("Đặt trước")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đặt trước' not found"));
-
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime requiredDate = now.toLocalDateTime();
+        Voucher voucher = null;
+        if (preOrderRequest.getVoucherCode() != null && !preOrderRequest.getVoucherCode().isEmpty()) {
+            voucher = voucherRepository.findVoucherByCode(preOrderRequest.getVoucherCode());
+            if (voucher.getExpiryDate().isBefore(now.toLocalDateTime())) {
+                throw new RuntimeException("Voucher has expired");
+            }
+            voucher.setMaxUses(voucher.getMaxUses() - 1);
+            voucherRepository.save(voucher);
+        }
         Order order = Order.builder()
                 .fullName(preOrderRequest.getFullName())
                 .address(preOrderRequest.getAddress())
@@ -164,6 +179,7 @@ public class OrderService {
                 .shipFee(preOrderRequest.getShipFee())
                 .totalPrice(preOrderRequest.getTotalPrice())
                 .voucherCode(preOrderRequest.getVoucherCode())
+                .voucher(voucher)
                 .orderStatus(preOrderStatus)
                 .isPreOrder(true)
                 .build();
@@ -202,7 +218,6 @@ public class OrderService {
             OrderStatus confirmStatus = orderStatusRepository.findByName("Chờ xác nhận")
                     .orElseThrow(() -> new RuntimeException("Order status 'Chờ xác nhận' not found"));
 
-            // Lấy tất cả các đơn hàng "Đặt trước"
             List<Order> preOrders = orderRepository.findByOrderStatus(preOrderStatus)
                     .stream()
                     .sorted(Comparator.comparing(Order::getRequiredDate))
@@ -321,6 +336,13 @@ public class OrderService {
 
         OrderStatus confirmedStatus = orderStatusRepository.findByName("Hoàn thành")
                 .orElseThrow(() -> new RuntimeException("Order status 'Đã xác nhận' not found"));
+        User member = order.getMember();
+        if (member != null) {
+            BigDecimal points = order.getTotalPrice().divide(BigDecimal.valueOf(100));
+            member.setPoint(points);
+            userRepository.save(member);
+        }
+
         order.setOrderStatus(confirmedStatus);
         order.setShippedDate(requiredDate);
 

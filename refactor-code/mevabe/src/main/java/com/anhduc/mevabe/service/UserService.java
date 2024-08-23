@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class UserService {
         roles.add(role);
         user.setRoles(roles);
         user.setActive(true);
-        user.setPoint(0);
+        user.setPoint(BigDecimal.ZERO);
         userRepository.save(user);
         return modelMapper.map(user, UserResponse.class);
     }
