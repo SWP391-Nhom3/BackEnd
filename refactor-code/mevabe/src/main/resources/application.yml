@@ -23,6 +23,13 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+    jpa:
+      properties:
+        hibernate:
+          jdbc:
+            time_zone: UTC
 
       # dùng sqlserver mở đoạn này
 #  datasource:

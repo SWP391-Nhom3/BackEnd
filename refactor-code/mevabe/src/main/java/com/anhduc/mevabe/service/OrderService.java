@@ -220,7 +220,7 @@ public class OrderService {
 
             List<Order> preOrders = orderRepository.findByOrderStatus(preOrderStatus)
                     .stream()
-                    .sorted(Comparator.comparing(Order::getRequiredDate))
+                    .sorted(Comparator.comparing(Order::getCreatedAt))
                     .toList();
 
             for (Order preOrder : preOrders) {
