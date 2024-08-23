@@ -29,6 +29,7 @@ public class ProductResponse {
     BigDecimal price;
     int stockQuantity;
     boolean isActive;
+    float rating;
     List<String> imageUrl;
     String coverImageUrl;
     Brand brand;
