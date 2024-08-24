@@ -252,16 +252,16 @@ public class ApplicationInitConfig {
                     .email("shipper@example.com")
                     .password(passwordEncoder.encode("shipperpassword"))
                     .active(true)
-                    .firstName("Shipper")
+                    .firstName("Shipper 1")
                     .lastName("User")
                     .roles(Set.of(shipperRole))
                     .build();
 
             User Shipper2 = User.builder()
-                    .email("shipper@gmail.com")
+                    .email("shipper2@gmail.com")
                     .password(passwordEncoder.encode("shipperpassword"))
                     .active(true)
-                    .firstName("Shipper")
+                    .firstName("Shipper 2")
                     .lastName("User")
                     .roles(Set.of(shipperRole))
                     .build();

@@ -4,7 +4,7 @@ spring:
   mail:
     host: smtp.gmail.com
     username: ducnase161841@fpt.edu.vn
-    password: reuo hmmc hcuu zzob
+    password: vgat drte uufu lxzt
     port: 587
     default-encoding: UTF-8
     protocol: smtp
