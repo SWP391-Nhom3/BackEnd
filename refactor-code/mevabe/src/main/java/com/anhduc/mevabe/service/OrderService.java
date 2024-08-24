@@ -51,6 +51,9 @@ public class OrderService {
     @Autowired
     private BatchRepository batchRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
@@ -153,6 +156,16 @@ public class OrderService {
 
         order.setOrderDetails(orderDetails);
         Order savedOrder = orderRepository.save(order);
+
+        // Send confirmation email
+        Map<String, Object> emailVariables = new HashMap<>();
+        emailVariables.put("order", savedOrder);
+        emailService.sendEmail(
+                savedOrder.getEmail(),
+                "Order Confirmation - " + savedOrder.getId(),
+                "order-confirmation",
+                emailVariables
+        );
         return savedOrder;
     }
 

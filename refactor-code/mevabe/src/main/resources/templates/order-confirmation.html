@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+<body>
+<h2>Order Confirmation - <span th:text="${order.id}"></span></h2>
+<p>Dear <span th:text="${order.fullName}"></span>,</p>
+<p>Thank you for your order. Below are the details:</p>
+<p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
+<p><strong>Total Price:</strong> <span th:text="${order.totalPrice}"></span> VND</p>
+<p><strong>Shipping Fee:</strong> <span th:text="${order.shipFee}"></span> VND</p>
+<p><strong>Payment Method:</strong> <span th:text="${order.paymentMethod}"></span></p>
+<p>We will process your order shortly.</p>
+<p>Best regards,</p>
+</body>
+</html>
