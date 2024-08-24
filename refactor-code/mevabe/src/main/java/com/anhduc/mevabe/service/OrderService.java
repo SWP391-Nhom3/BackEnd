@@ -187,6 +187,11 @@ public class OrderService {
         if (preOrderRequest.getUserId() != null) {
             User user = userRepository.findById(preOrderRequest.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (preOrderRequest.getPoint() != null && preOrderRequest.getPoint().compareTo(BigDecimal.ZERO) > 0) {
+                user.setPoint(user.getPoint().subtract(preOrderRequest.getPoint()));
+                order.setPoint(preOrderRequest.getPoint());
+            }
             order.setMember(user);
         }
 

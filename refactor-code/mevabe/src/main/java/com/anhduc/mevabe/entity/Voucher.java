@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class Voucher extends AuditAble{
     Set<Product> products;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "voucher")
-    Order order;
+    @OneToMany(mappedBy = "voucher")
+    List<Order> order;
 
 }

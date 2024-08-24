@@ -54,7 +54,7 @@ public class Order extends AuditAble {
 
     boolean isPreOrder = false;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "voucher_id", referencedColumnName = "id", nullable = true)
     private Voucher voucher;
 
